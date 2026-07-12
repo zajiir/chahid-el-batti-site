@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"print\\('python ok'\\)\")",
+      "Bash(mkdir -p \"C:\\\\Users\\\\chahi\\\\OneDrive - edu.univ-paris13.fr\\\\Bureau\\\\mon-site\\\\.claude\")",
+      "Bash(python generate.py)",
+      "Bash(PYTHONIOENCODING=utf-8 python generate.py)",
+      "Bash(npm -v)",
+      "PowerShell(node -v)",
+      "PowerShell(npm -v)",
+      "PowerShell(winget --version)",
+      "PowerShell(winget install OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); node -v; npm -v)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git config *)",
+      "Read(//c/Users/chahi/**)",
+      "Bash(git lfs *)",
+      "Bash(timeout 30 git add -A)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(tasklist)",
+      "Bash(powershell -Command \"Get-Process git -ErrorAction SilentlyContinue\")",
+      "Bash(cd \"C:\\\\Users\\\\chahi\\\\OneDrive - edu.univ-paris13.fr\\\\Bureau\\\\mon-site\" && rm .git/index.lock && echo removed)",
+      "Bash(GIT_AUTHOR_NAME=\"Chahid El Batti\" GIT_AUTHOR_EMAIL=\"teshki.pro@gmail.com\" GIT_COMMITTER_NAME=\"Chahid El Batti\" GIT_COMMITTER_EMAIL=\"teshki.pro@gmail.com\" git commit -m \"Snapshot: static HTML/CSS site before React migration\" -q)",
+      "Bash(rm -f .git/index.lock)",
+      "Bash(git reset *)",
+      "Bash(time git add about.html arena.html index.html music.html parcours.html photos.html sculpture.html graphiques.html travaux.html style.css generate.py LANCER.bat)",
+      "Bash(timeout 20 git add pictograms)",
+      "Bash(timeout 45 git add photos)",
+      "Bash(cd \"C:\\\\Users\\\\chahi\\\\OneDrive - edu.univ-paris13.fr\\\\Bureau\\\\mon-site\" && rm -f .git/index.lock && git status --short | grep \"^A\" | wc -l)",
+      "Bash(timeout 40 git add sculptures)",
+      "Bash(sort -k5 -n -r)",
+      "Bash(time git add -A)"
+    ]
+  }
+}

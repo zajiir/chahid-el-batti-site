@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music</title>
+<link rel="stylesheet" href="style.css">
+<style>
+:root { --m: #111; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); color: var(--m); background:#fff; padding:6rem 2rem 3rem; }
+h1 { font-weight:400; margin-bottom:2rem; font-size:1.6rem; }
+h2 { font-weight:400; font-size:1.1rem; margin-bottom:1rem; opacity:0.7; }
+.player { margin-bottom:3rem; }
+.platforms { display:grid; gap:1rem; max-width:400px; }
+.platforms a { display:block; padding:1rem; border:1px solid #eee; text-decoration:none; color:var(--m); transition:0.2s; }
+.platforms a:hover { border-color:#999; }
+.platforms a strong { display:block; font-weight:500; margin-bottom:0.2rem; }
+.platforms a span { font-size:0.85rem; opacity:0.6; }
+hr { border:none; border-top:1px solid #eee; margin:2.5rem 0; }
+@media (max-width:600px){ body { padding:5rem 1.2rem 2rem; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="index.html">zajîïr</a></div>
+  <div>
+    <a href="index.html">Accueil</a>
+    <a href="travaux.html">Travaux</a>
+    <a href="music.html">Music</a>
+    <a href="arena.html">Are.na</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<h1>Music</h1>
+
+<!-- DERNIER SON -->
+<div class="player">
+  <h2>zajîïr — starWalker</h2>
+  <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" 
+    src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/zajiir/starwalker&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true">
+  </iframe>
+</div>
+
+<hr>
+
+<h2>Plateformes</h2>
+
+<div class="platforms">
+  <a href="https://soundcloud.com/zajiir" target="_blank" rel="noopener">
+    <strong>SoundCloud</strong>
+    <span>soundcloud.com/zajiir</span>
+  </a>
+  <a href="https://open.spotify.com/intl-fr/artist/3WEBoiCmld8L1lnwtnYfew" target="_blank" rel="noopener">
+    <strong>Spotify</strong>
+    <span>Profil artiste</span>
+  </a>
+  <a href="https://zajr0kp.bandcamp.com/" target="_blank" rel="noopener">
+    <strong>Bandcamp</strong>
+    <span>zajr0kp.bandcamp.com</span>
+  </a>
+  <a href="https://music.youtube.com/channel/UCk7on94O07LCAbs4KGmhZpQ" target="_blank" rel="noopener">
+    <strong>YouTube Music</strong>
+    <span>Chaîne officielle</span>
+  </a>
+  <a href="https://music.apple.com/fr/artist/zaj%C3%AE%C3%AFr/1833649460" target="_blank" rel="noopener">
+    <strong>Apple Music</strong>
+    <span>Profil artiste</span>
+  </a>
+</div>
+
+</body>
+</html>

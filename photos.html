@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photos</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  :root { --m: #111; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--font); color: var(--m); background:#fff; padding:6rem 2rem 3rem; }
+  .back { display:inline-block; margin-bottom:2rem; text-decoration:none; color:var(--m); border-bottom:1px solid #ccc; font-size:0.9rem; }
+  .back:hover { border-bottom:1px solid var(--m); }
+  h1 { font-weight:400; margin-bottom:2rem; font-size:1.6rem; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:1rem; }
+  .item { aspect-ratio:1; overflow:hidden; cursor:pointer; background:#f5f5f5; }
+  .item img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.3s; }
+  .item:hover img { transform:scale(1.03); }
+  #lightbox { display:none; position:fixed; inset:0; background:rgba(255,255,255,0.96); z-index:200; cursor:zoom-out; }
+  #lightbox img { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); max-width:90vw; max-height:90vh; object-fit:contain; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
+  @media (max-width:600px){ body { padding:5rem 1.2rem 2rem; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="index.html">Chahîd EL BATTI</a></div>
+  <div>
+    <a href="index.html">Accueil</a>
+    <a href="travaux.html">Travaux</a>
+    <a href="music.html">Music</a>
+    <a href="arena.html">Are.na</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<a href="travaux.html" class="back">← Retour aux travaux</a>
+<h1>Photos</h1>
+
+<div class="grid" id="gallery"></div>
+
+<div id="lightbox" onclick="this.style.display='none'">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+const gallery = document.getElementById('gallery');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+
+// Liste des vraies images du dossier photos/
+const images = ["000000890028.jpg", "000000900011.jpg", "P1010026.JPG", "000000900022.jpg", "000000880028.jpg", "000000890029.jpg", "000000890012.jpg", "000000900016.jpg", "000000900023.jpg", "photos18.jpg.jpg", "000000890007.jpg", "000000880022.jpg", "000000910033.jpg", "000000910022.jpg", "photos26.jpg.jpg", "000000890035.jpg", "photos3.jpg.jpg", "000000890033.jpg", "photos21.jpg.jpg", "000000890009.jpg", "P1010013.JPG", "000000880032.jpg", "000000890017.jpg", "000000880026.jpg", "000000880027.jpg", "000000880031.jpg", "000000910002.jpg", "000066780006.jpg", "000000900001.jpg", "000000900006.jpg", "000066780014.jpg", "000000910030.jpg", "photos22.jpg.jpg", "photos4.jpg.jpg", "photos16.jpg.jpg", "000000900026.jpg", "P1010034.JPG", "000066780009.jpg", "000000900019.jpg", "photos28.jpg.jpg", "000066780015.jpg", "000000910028.jpg", "000000910001.jpg", "000000890027.jpg", "000000900029.jpg", "000000900004.jpg", "P1010033.JPG", "000000900015.jpg", "photos20.jpg.jpg", "000000900020.jpg", "photos11.jpg.jpg", "000000900008.jpg", "000000910014.jpg", "photos14.jpg.jpg", "photos8.jpg.jpg", "P1010019.JPG", "000000880036.jpg", "000000890021.jpg", "000000880029.jpg", "000000890016.jpg", "000000900028.jpg", "000000910027.jpg", "P1010012.JPG", "000000910024.jpg", "000000890008.jpg", "000000900003.jpg", "000000890014.jpg", "000000910009.jpg", "000000900014.jpg", "000000910011.jpg", "000000890011.jpg", "000000910003.jpg", "000000890018.jpg", "photos10.jpg.jpg", "photos15.jpg.jpg", "000000900002.jpg", "photos24.jpg.jpg", "000000880024.jpg", "P1010020.JPG", "photos23.jpg.jpg", "photos27.jpg.jpg", "000000890034.jpg", "000000900025.jpg", "000000890002.jpg", "000000880034.jpg", "000000900007.jpg", "000000910008.jpg", "000000900012.jpg", "photos13.jpg.jpg", "000000900031.jpg", "000000900032.jpg", "P1010027.JPG", "photos2.jpg.jpg", "000000910007.jpg", "000000900009.jpg", "000000900027.jpg", "000000890015.jpg", "P1010011.JPG", "000000880023.jpg", "000000910010.jpg", "000000900018.jpg", "000000910005.jpg", "000000910031.jpg", "000000900024.jpg", "photos5.jpg.jpg", "photos6.jpg.jpg", "000000910006.jpg", "000000900005.jpg", "photos19.jpg.jpg", "000000890023.jpg", "photos9.jpg.jpg", "000000890006.jpg", "000000890004.jpg", "000000890026.jpg", "000000910023.jpg", "000000900021.jpg", "P1010010.JPG", "000000910018.jpg", "000000910015.jpg", "000000910019.jpg", "000000890010.jpg", "000000910012.jpg", "000000880035.jpg", "000000880033.jpg", "000000890024.jpg", "000000900030.jpg", "000000890019.jpg", "000000910032.jpg", "000000900017.jpg", "000000910029.jpg", "000000900010.jpg", "000000890020.jpg", "000000890025.jpg", "photos30.jpg.JPG", "000000890001.jpg", "photos12.jpg.jpg", "000000890031.jpg", "000000910021.jpg", "000000890003.jpg", "photos1.jpg.jpg", "000000910016.jpg", "photos7.jpg.jpg", "000000910025.jpg", "000066780028.jpg", "photos25.jpg.jpg", "P1010029.JPG", "photos29.jpg.jpg", "000000890005.jpg", "000000890022.jpg", "000000880030.jpg", "000000910013.jpg", "000000900013.jpg", "000000910020.jpg", "000000910017.jpg", "000000880025.jpg", "000000890030.jpg", "000000890032.jpg", "000000890013.jpg", "photos17.jpg.jpg", "000000910026.jpg", "000000890036.jpg", "P1010030.JPG", "000000910004.jpg"];
+
+images.forEach((fichier, i) => {
+  const div = document.createElement('div');
+  div.className = 'item';
+  const img = document.createElement('img');
+  img.src = `photos/${fichier}`;
+  img.alt = `Photo ${i + 1}`;
+  img.loading = 'lazy';
+
+  // Si l'image n'existe pas, on supprime la case proprement
+  img.onerror = function() { div.remove(); };
+
+  // Au clic : plein écran
+  img.onclick = function(e) {
+    e.stopPropagation();
+    lightboxImg.src = this.src;
+    lightbox.style.display = 'block';
+  };
+
+  div.appendChild(img);
+  gallery.appendChild(div);
+});
+</script>
+
+</body>
+</html>

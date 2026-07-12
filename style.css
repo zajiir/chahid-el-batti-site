@@ -1,0 +1,118 @@
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ========== NAVIGATION (globale, toutes les pages) ========== */
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(46, 45, 136, 0.94);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+nav .logo { font-weight: 600; font-size: 0.9rem; letter-spacing: 0.04em; }
+nav .logo a { text-decoration: none; color: #fff; }
+
+nav a {
+  text-decoration: none;
+  color: #fff;
+  margin-left: 1.5rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+nav a:hover { opacity: 1; }
+
+@media (max-width: 600px) {
+  nav { padding: 1rem 1.2rem; }
+  nav a { margin-left: 0.8rem; font-size: 0.7rem; }
+}
+
+/* ========== ONGLETS TRAVAUX ========== */
+
+.sub-nav {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin: 2rem 0 3rem;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 1rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  opacity: 0.4;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.tab-btn:hover {
+  opacity: 0.8;
+}
+
+.tab-btn.active {
+  opacity: 1;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+}
+
+/* Les galeries sont cachées par défaut */
+.gallery {
+  display: none;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+/* Seule la galerie "active" s'affiche */
+.gallery.active {
+  display: grid;
+}
+
+/* Style des images */
+.gallery img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Si ton fond est sombre, les images se détachent mieux */
+.gallery img:hover {
+  opacity: 0.85;
+  transition: opacity 0.3s;
+}
+
+.vide {
+  opacity: 0.5;
+  font-style: italic;
+}

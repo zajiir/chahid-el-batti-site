@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Are.na — Chahîd EL BATTI</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  :root { --bg:#ffffff; --txt:#2E2D88; --accent:#3A2EFE; --muted:rgba(46,45,136,0.5); --border:rgba(46,45,136,0.12); }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--font); background:var(--bg); color:var(--txt); line-height:1.6; padding:6rem 2rem 3rem; max-width:1000px; margin:0 auto; }
+  ::selection { background:var(--accent); color:#fff; }
+  h1 { font-size:1rem; font-weight:400; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2.5rem; }
+  .profile-link { display:inline-block; margin-bottom:3rem; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--txt); border-bottom:1px solid var(--border); padding-bottom:0.2rem; text-decoration:none; transition:color 0.2s; }
+  .profile-link:hover { color:var(--accent); }
+  .channels { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem; margin-bottom:4rem; }
+  .channel { border:1px solid var(--border); background:var(--bg); text-decoration:none; color:var(--txt); transition:transform 0.2s, box-shadow 0.2s, border-color 0.2s; display:flex; flex-direction:column; }
+  .channel:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(46,45,136,0.08); border-color:var(--accent); }
+  .channel-img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; background:var(--border); }
+  .channel-info { padding:1rem; flex:1; display:flex; flex-direction:column; justify-content:space-between; }
+  .channel-title { font-size:0.95rem; font-weight:500; margin-bottom:0.4rem; }
+  .channel-desc { font-size:0.82rem; color:var(--muted); line-height:1.5; }
+  .channel-meta { font-size:0.75rem; color:var(--muted); margin-top:0.8rem; text-transform:uppercase; letter-spacing:0.06em; }
+  .loading { color:var(--muted); font-size:0.9rem; padding:2rem 0; }
+  .channel-explore { color:var(--accent); font-weight:600; }
+  @media (max-width:600px){
+    body { padding:5rem 1.2rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><a href="index.html">Chahîd EL BATTI</a></div>
+  <div>
+    <a href="index.html">Accueil</a>
+    <a href="travaux.html">Travaux</a>
+    <a href="music.html">Music</a>
+    <a href="arena.html">Are.na</a>
+    <a href="parcours.html">Parcours</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<h1>Are.na</h1>
+<a class="profile-link" href="https://www.are.na/zaji-idoo/channels" target="_blank" rel="noopener">Tous les channels ↗</a>
+
+<div class="channels" id="channels">
+  <div class="loading">Chargement…</div>
+</div>
+
+<script>
+const container = document.getElementById('channels');
+const slugs = [
+  { slug: 'going-through-life', note: 'Images en flux' },
+  { slug: 'books-wybua5xvvoa', note: 'Références & lectures' },
+  { slug: 'poem-hg0zs9crmwa', note: 'Textes & poésie' }
+];
+
+Promise.all(
+  slugs.map(s => fetch(`https://api.are.na/v2/channels/${s.slug}/contents?per=1`).then(r => r.json()))
+).then(results => {
+  container.innerHTML = '';
+  results.forEach((data, i) => {
+    const ch = data.channel || {};
+    const first = data.contents?.[0];
+    const cover = first?.image?.large?.url || first?.image?.medium?.url || first?.image?.thumb?.url || '';
+    const a = document.createElement('a');
+    a.className = 'channel';
+    a.href = `https://www.are.na/zaji-idoo/${slugs[i].slug}`;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML = `
+      ${cover ? `<img class="channel-img" src="${cover}" alt="" loading="lazy">` : `<div class="channel-img" style="background:var(--border)"></div>`}
+      <div class="channel-info">
+        <div>
+          <div class="channel-title">${ch.title || slugs[i].slug}</div>
+          <div class="channel-desc">${slugs[i].note}</div>
+        </div>
+        <div class="channel-meta">${ch.length || data.length || '?'} blocs <span class="channel-explore">— Explorer ↗</span></div>
+      </div>`;
+    container.appendChild(a);
+  });
+}).catch(() => {
+  container.innerHTML = '<div class="loading">Impossible de charger les channels. <a href="https://www.are.na/zaji-idoo/channels" target="_blank" rel="noopener" style="color:var(--accent);">Consulter sur Are.na ↗</a></div>';
+});
+</script>
+
+</body>
+</html>

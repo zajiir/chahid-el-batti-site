@@ -1,0 +1,8 @@
+# Raw archival scans (huge, not used by the site — site only uses jpg/png/etc.)
+*.tif
+*.tiff
+
+# Node / Vite
+node_modules/
+dist/
+.vite/

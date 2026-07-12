@@ -1,0 +1,11 @@
+Bonjour
+
+J'aimerais optimiser mon site web suivant. J'ai l'impression que le fichier CSS n'est jamais référencé dans mon code. J'aimerais que tu fasses le suivant:
+
+1- Vérifie le référencement du css et, si il n'est pas appliqué, applique le s'il te plaît 
+
+2- Ensuite répare les erreurs de typographie s'il te plaît, utilise la typographie la plus commune dans le code comme celle du texte global. on va probablement changer la police plus tard mais on aimerait pouvoir facilement remplacer la police
+
+3- Change l'opacité du défilement du channel "going through life", rend le moins opaque
+
+4- Dans le fichier "index", j'aimerais que t'inverse le blanc et le bleu 
