@@ -2,8 +2,9 @@ backend:
   name: github
   repo: zajiir/chahid-el-batti-site
   branch: main
-  auth_type: pkce
-  app_id: Ov23liwFYCxWuoQLG5oX
+  # Auth via le proxy OAuth intégré de Netlify (Client ID + secret
+  # enregistrés côté Netlify, voir Site settings → OAuth) plutôt qu'en PKCE
+  # direct — c'est l'intégration standard pour un site hébergé sur Netlify.
 
 # Pas de dossier de médias global : les photos de Travaux se gèrent
 # directement dans les dossiers src/assets/travaux/* sur GitHub (voir
