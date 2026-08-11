@@ -812,11 +812,18 @@ h3 {
   padding: 0;
   cursor: zoom-in;
   flex-shrink: 0;
+  /* Réserve une zone cliquable non nulle avant que l'image (lazy-loaded)
+     n'ait chargé et ne révèle ses vraies dimensions — sans ça la largeur
+     du bouton reste à 0 le temps du chargement, ce qui rend le clic
+     impossible sur un chargement lent (réseau réel, contrairement au
+     serveur de dev en local). */
+  min-width: 40vh;
 }
 
 .kinetic__item img {
   height: 84vh;
   width: auto;
+  min-width: 40vh;
   max-width: 74vw;
   object-fit: cover;
   pointer-events: none;
@@ -841,8 +848,12 @@ h3 {
 }
 
 @media (max-width: 700px) {
+  .kinetic__item {
+    min-width: 30vh;
+  }
   .kinetic__item img {
     height: 52vh;
+    min-width: 30vh;
     max-width: 88vw;
   }
 }
