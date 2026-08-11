@@ -1,76 +1,12 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chahîd EL BATTI</title>
-<link rel="stylesheet" href="style.css">
-<style>
-  :root { --bg:#ffffff; --txt:#2E2D88; --accent:#3A2EFE; --muted:rgba(46,45,136,0.5); --border:rgba(46,45,136,0.12); }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html, body { height:100%; }
-  body { font-family: var(--font); background:var(--bg); color:var(--txt); overflow-x:hidden; }
-  ::selection { background:var(--accent); color:#fff; }
-  .hero { position:relative; height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; overflow:hidden; }
-  .marquee-container { position:absolute; top:0; left:0; width:100%; height:100%; display:flex; align-items:center; overflow:hidden; opacity:0.75; z-index:0; }
-  .marquee-track { display:flex; gap:2rem; width:max-content; animation:marquee 50s linear infinite; will-change:transform; }
-  .marquee-track img { height:75vh; width:auto; object-fit:cover; flex-shrink:0; display:block; background:var(--border); }
-  @keyframes marquee { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
-  .hero-content { position:relative; z-index:1; text-align:center; pointer-events:none; background:rgba(255,255,255,0.82); backdrop-filter:blur(6px); padding:2rem 3rem; border-radius:14px; }
-  .hero-content h1 { font-size:clamp(2.2rem, 6vw, 5rem); font-weight:500; letter-spacing:-0.02em; line-height:1; margin-bottom:0.6rem; color:var(--txt); }
-  .hero-content p { font-size:0.85rem; text-transform:uppercase; letter-spacing:0.15em; opacity:0.6; color:var(--txt); }
-  .scroll-hint { position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); z-index:1; }
-  @media (max-width:600px){
-    .marquee-track img { height:60vh; }
-    .hero-content { padding:1.5rem 2rem; }
-  }
-</style>
-</head>
-<body>
-
-<nav>
-  <div class="logo"><a href="index.html">Chahîd EL BATTI</a></div>
-  <div>
-    <a href="index.html">Accueil</a>
-    <a href="travaux.html">Travaux</a>
-    <a href="music.html">Music</a>
-    <a href="arena.html">Are.na</a>
-    <a href="parcours.html">Parcours</a>
-    <a href="about.html">About</a>
-  </div>
-</nav>
-
-<div class="hero">
-  <div class="marquee-container">
-    <div class="marquee-track" id="marqueeTrack"></div>
-  </div>
-  <div class="hero-content">
-    <h1>Chahîd EL BATTI</h1>
-    <p>Paris — Multidisciplinaire</p>
-  </div>
-  <div class="scroll-hint">↓</div>
-</div>
-
-<script>
-const track = document.getElementById('marqueeTrack');
-fetch('https://api.are.na/v2/channels/going-through-life/contents?per=20')
-  .then(r => r.json())
-  .then(data => {
-    const imgs = data.contents
-      .filter(b => b.image && b.image.large && b.image.large.url)
-      .map(b => b.image.large.url);
-    if(!imgs.length) return;
-    [...imgs, ...imgs].forEach(src => {
-      const img = document.createElement('img');
-      img.src = src;
-      img.alt = '';
-      track.appendChild(img);
-    });
-  })
-  .catch(() => {
-    track.innerHTML = '<div style="width:100vw;text-align:center;color:var(--muted);font-size:0.8rem;padding-top:40vh;">Images non disponibles</div>';
-  });
-</script>
-
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chahîd EL BATTI</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>

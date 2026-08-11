@@ -1,0 +1,86 @@
+backend:
+  name: github
+  repo: zajiir/chahid-el-batti-site
+  branch: main
+  auth_type: pkce
+  app_id: TODO_GITHUB_OAUTH_CLIENT_ID # Client ID de l'app OAuth GitHub, créée une fois le site en ligne
+
+# Pas de dossier de médias global : les photos de Travaux se gèrent
+# directement dans les dossiers src/assets/travaux/* sur GitHub (voir
+# README), pas besoin de passer par le CMS pour ça.
+media_folder: "src/assets/uploads"
+public_folder: "/src/assets/uploads"
+
+publish_mode: simple
+locale: fr
+
+collections:
+  - name: "accueil"
+    label: "Accueil"
+    files:
+      - file: "src/content/home.json"
+        label: "Page d'accueil"
+        name: "home"
+        fields:
+          - { label: "Nom affiché", name: "name", widget: "string" }
+          - { label: "Sous-titre", name: "subtitle", widget: "string" }
+
+  - name: "about"
+    label: "About"
+    files:
+      - file: "src/content/about.json"
+        label: "Page About"
+        name: "about"
+        fields:
+          - { label: "Email", name: "email", widget: "string" }
+          - { label: "Téléphone", name: "phone", widget: "string" }
+          - { label: "Localisation", name: "location", widget: "string" }
+          - label: "Biographie (un paragraphe par bloc)"
+            name: "bio"
+            widget: "list"
+            field: { label: "Paragraphe", name: "paragraph", widget: "text" }
+          - label: "Réseaux / liens"
+            name: "social"
+            widget: "list"
+            fields:
+              - { label: "Nom affiché", name: "name", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+
+  - name: "parcours"
+    label: "Parcours"
+    files:
+      - file: "src/content/parcours.json"
+        label: "Expositions / ateliers"
+        name: "parcours"
+        fields:
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            fields:
+              - { label: "Titre de la section", name: "title", widget: "string" }
+              - label: "Éléments"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Année", name: "year", widget: "number", value_type: "int" }
+                  - { label: "Titre", name: "title", widget: "string" }
+                  - { label: "Détail (lieu, ville...)", name: "detail", widget: "string" }
+
+  - name: "music"
+    label: "Music"
+    files:
+      - file: "src/content/music.json"
+        label: "Page Music"
+        name: "music"
+        fields:
+          - label: "Lien SoundCloud du morceau mis en avant"
+            name: "trackUrl"
+            widget: "string"
+          - { label: "Titre du morceau affiché", name: "trackTitle", widget: "string" }
+          - label: "Plateformes"
+            name: "platforms"
+            widget: "list"
+            fields:
+              - { label: "Nom (ex. Spotify)", name: "name", widget: "string" }
+              - { label: "Texte affiché (ex. Profil artiste)", name: "handle", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }

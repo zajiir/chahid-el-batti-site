@@ -6,3 +6,7 @@
 node_modules/
 dist/
 .vite/
+
+# Config local à cette machine/session (chemins absolus, historique d'outils) —
+# jamais à publier.
+.claude/

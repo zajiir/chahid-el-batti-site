@@ -1,0 +1,31 @@
+{
+  "trackUrl": "https://soundcloud.com/zajiir/starwalker",
+  "trackTitle": "zajîïr — starWalker",
+  "platforms": [
+    {
+      "name": "SoundCloud",
+      "handle": "soundcloud.com/zajiir",
+      "url": "https://soundcloud.com/zajiir"
+    },
+    {
+      "name": "Spotify",
+      "handle": "Profil artiste",
+      "url": "https://open.spotify.com/intl-fr/artist/3WEBoiCmld8L1lnwtnYfew"
+    },
+    {
+      "name": "Bandcamp",
+      "handle": "zajr0kp.bandcamp.com",
+      "url": "https://zajr0kp.bandcamp.com/"
+    },
+    {
+      "name": "YouTube Music",
+      "handle": "Chaîne officielle",
+      "url": "https://music.youtube.com/channel/UCk7on94O07LCAbs4KGmhZpQ"
+    },
+    {
+      "name": "Apple Music",
+      "handle": "Profil artiste",
+      "url": "https://music.apple.com/fr/artist/zaj%C3%AE%C3%AFr/1833649460"
+    }
+  ]
+}

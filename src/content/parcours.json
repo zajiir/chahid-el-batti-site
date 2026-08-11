@@ -1,0 +1,54 @@
+{
+  "sections": [
+    {
+      "title": "Expositions individuelles",
+      "items": [
+        {
+          "year": 2025,
+          "title": "« Space echoes like an immense tomb, yet the stars still burn. Why does the sun take so long to die ? »",
+          "detail": "Diplôme de 3e année — Beaux-Arts de Paris, France"
+        },
+        {
+          "year": 2023,
+          "title": "« Faire/niyya/Fer »",
+          "detail": "mat3amclub — Paris, France"
+        }
+      ]
+    },
+    {
+      "title": "Expositions collectives",
+      "items": [
+        {
+          "year": 2025,
+          "title": "« www.www.www »",
+          "detail": "Atelier Sirjacq — Beaux-Arts de Paris, France"
+        },
+        {
+          "year": 2024,
+          "title": "« Dans mon peignoir, j’attends la fin du monde »",
+          "detail": "mat3amclub — La Corvée — Paris, France"
+        },
+        {
+          "year": 2023,
+          "title": "« Carte Blanche »",
+          "detail": "Institut Géographique National — Le DOC — Paris, France"
+        },
+        {
+          "year": 2023,
+          "title": "« Première Encre »",
+          "detail": "La Fab — Paris, France"
+        }
+      ]
+    },
+    {
+      "title": "Ateliers",
+      "items": [
+        {
+          "year": 2025,
+          "title": "« Rêves et étoiles »",
+          "detail": "mat3amclub — La Corvée — Paris, France"
+        }
+      ]
+    }
+  ]
+}
