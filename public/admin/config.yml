@@ -3,7 +3,7 @@ backend:
   repo: zajiir/chahid-el-batti-site
   branch: main
   auth_type: pkce
-  app_id: TODO_GITHUB_OAUTH_CLIENT_ID # Client ID de l'app OAuth GitHub, créée une fois le site en ligne
+  app_id: Ov23liwFYCxWuoQLG5oX
 
 # Pas de dossier de médias global : les photos de Travaux se gèrent
 # directement dans les dossiers src/assets/travaux/* sur GitHub (voir
