@@ -16,6 +16,17 @@ publish_mode: simple
 locale: fr
 
 collections:
+  - name: "site"
+    label: "Bandeau défilant"
+    files:
+      - file: "src/content/site.json"
+        label: "Réglages du site"
+        name: "site"
+        fields:
+          - label: "Texte du bandeau défilant (bas de chaque page)"
+            name: "marquee"
+            widget: "string"
+
   - name: "accueil"
     label: "Accueil"
     files:

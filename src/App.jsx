@@ -3,8 +3,8 @@ import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import Nav from "./components/Nav";
 import RadioPlayer from "./components/RadioPlayer";
 import Marquee from "./components/Marquee";
-import { SIGNATURE } from "./lib/constants";
 import { applyDayNightAttribute } from "./lib/dayNight";
+import site from "./content/site.json";
 import Home from "./pages/Home";
 import Travaux from "./pages/Travaux";
 import Music from "./pages/Music";
@@ -68,7 +68,7 @@ function AppShell() {
         <Route path="/friends" element={<Friends />} />
       </Routes>
       <RadioPlayer />
-      <Marquee text={SIGNATURE} />
+      <Marquee text={site.marquee} />
     </>
   );
 }
