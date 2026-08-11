@@ -78,6 +78,16 @@ collections:
                   - { label: "Titre", name: "title", widget: "string" }
                   - { label: "Détail (lieu, ville...)", name: "detail", widget: "string" }
 
+  - name: "friends"
+    label: "Friends"
+    files:
+      - file: "src/content/friends.json"
+        label: "Page Friends"
+        name: "friends"
+        fields:
+          - { label: "Titre", name: "heading", widget: "string" }
+          - { label: "Message", name: "message", widget: "string" }
+
   - name: "music"
     label: "Music"
     files:
