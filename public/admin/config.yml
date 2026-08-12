@@ -16,32 +16,63 @@ publish_mode: simple
 locale: fr
 
 collections:
-  - name: "site"
-    label: "Bandeau défilant"
-    files:
-      - file: "src/content/site.json"
-        label: "Réglages du site"
-        name: "site"
-        fields:
-          - label: "Texte du bandeau défilant (bas de chaque page)"
-            name: "marquee"
-            widget: "string"
-
-  - name: "accueil"
-    label: "Accueil"
+  - name: "pages"
+    label: "📄 Pages du site"
+    description: "Le texte de chaque page — dans l'ordre où elles apparaissent dans le menu."
     files:
       - file: "src/content/home.json"
-        label: "Page d'accueil"
+        label: "1 — Accueil"
         name: "home"
         fields:
           - { label: "Nom affiché", name: "name", widget: "string" }
           - { label: "Sous-titre", name: "subtitle", widget: "string" }
 
-  - name: "about"
-    label: "About"
-    files:
+      - file: "src/content/music.json"
+        label: "2 — Music"
+        name: "music"
+        fields:
+          - label: "Lien SoundCloud du morceau mis en avant"
+            name: "trackUrl"
+            widget: "string"
+            hint: "Colle l'URL de la page du morceau sur SoundCloud."
+          - { label: "Titre du morceau affiché", name: "trackTitle", widget: "string" }
+          - label: "Plateformes"
+            name: "platforms"
+            widget: "list"
+            summary: "{{fields.name}}"
+            fields:
+              - { label: "Nom (ex. Spotify)", name: "name", widget: "string" }
+              - { label: "Texte affiché (ex. Profil artiste)", name: "handle", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+
+      - file: "src/content/friends.json"
+        label: "3 — Friends"
+        name: "friends"
+        fields:
+          - { label: "Titre", name: "heading", widget: "string" }
+          - { label: "Message", name: "message", widget: "string" }
+
+      - file: "src/content/parcours.json"
+        label: "4 — Parcours"
+        name: "parcours"
+        fields:
+          - label: "Sections"
+            name: "sections"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Titre de la section", name: "title", widget: "string" }
+              - label: "Éléments"
+                name: "items"
+                widget: "list"
+                summary: "{{fields.year}} — {{fields.title}}"
+                fields:
+                  - { label: "Année", name: "year", widget: "number", value_type: "int" }
+                  - { label: "Titre", name: "title", widget: "string" }
+                  - { label: "Détail (lieu, ville...)", name: "detail", widget: "string" }
+
       - file: "src/content/about.json"
-        label: "Page About"
+        label: "5 — About"
         name: "about"
         fields:
           - { label: "Email", name: "email", widget: "string" }
@@ -54,55 +85,19 @@ collections:
           - label: "Réseaux / liens"
             name: "social"
             widget: "list"
+            summary: "{{fields.name}}"
             fields:
               - { label: "Nom affiché", name: "name", widget: "string" }
               - { label: "URL", name: "url", widget: "string" }
 
-  - name: "parcours"
-    label: "Parcours"
+  - name: "reglages"
+    label: "⚙️ Réglages globaux"
+    description: "Éléments communs à toutes les pages."
     files:
-      - file: "src/content/parcours.json"
-        label: "Expositions / ateliers"
-        name: "parcours"
+      - file: "src/content/site.json"
+        label: "Bandeau défilant"
+        name: "site"
         fields:
-          - label: "Sections"
-            name: "sections"
-            widget: "list"
-            fields:
-              - { label: "Titre de la section", name: "title", widget: "string" }
-              - label: "Éléments"
-                name: "items"
-                widget: "list"
-                fields:
-                  - { label: "Année", name: "year", widget: "number", value_type: "int" }
-                  - { label: "Titre", name: "title", widget: "string" }
-                  - { label: "Détail (lieu, ville...)", name: "detail", widget: "string" }
-
-  - name: "friends"
-    label: "Friends"
-    files:
-      - file: "src/content/friends.json"
-        label: "Page Friends"
-        name: "friends"
-        fields:
-          - { label: "Titre", name: "heading", widget: "string" }
-          - { label: "Message", name: "message", widget: "string" }
-
-  - name: "music"
-    label: "Music"
-    files:
-      - file: "src/content/music.json"
-        label: "Page Music"
-        name: "music"
-        fields:
-          - label: "Lien SoundCloud du morceau mis en avant"
-            name: "trackUrl"
+          - label: "Texte du bandeau défilant (bas de chaque page)"
+            name: "marquee"
             widget: "string"
-          - { label: "Titre du morceau affiché", name: "trackTitle", widget: "string" }
-          - label: "Plateformes"
-            name: "platforms"
-            widget: "list"
-            fields:
-              - { label: "Nom (ex. Spotify)", name: "name", widget: "string" }
-              - { label: "Texte affiché (ex. Profil artiste)", name: "handle", widget: "string" }
-              - { label: "URL", name: "url", widget: "string" }
