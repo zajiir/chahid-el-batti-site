@@ -163,7 +163,6 @@ collections:
         name: "about"
         fields:
           - { label: "Email", name: "email", widget: "string" }
-          - { label: "Téléphone", name: "phone", widget: "string" }
           - { label: "Localisation", name: "location", widget: "string" }
           - { label: "Localisation (anglais — vide = texte français)", name: "location_en", widget: "string", required: false }
           - label: "Biographie (un paragraphe par bloc)"
