@@ -7,6 +7,12 @@ node_modules/
 dist/
 .vite/
 
+# Versions allégées des images Travaux, régénérées à chaque build
+# (scripts/build-variants.mjs)
+public/travaux/_thumbs/
+public/travaux/_large/
+src/generated/
+
 # Config local à cette machine/session (chemins absolus, historique d'outils) —
 # jamais à publier.
 .claude/

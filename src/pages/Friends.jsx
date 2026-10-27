@@ -4,7 +4,7 @@ export default function Friends() {
   return (
     <div className="page page--narrow">
       <div className="page-head">
-        <span className="eyebrow">19 / FRIENDS (TOGETHER)</span>
+        <span className="eyebrow">04 / FRIENDS (TOGETHER)</span>
         <h1>{friends.heading}</h1>
       </div>
       <div className="friends__placeholder">

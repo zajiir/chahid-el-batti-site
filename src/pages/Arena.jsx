@@ -1,73 +1,81 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchChannel, blockImageUrl } from "../lib/arena";
+import { fetchChannelInfo, fetchContents, blockImage } from "../lib/arena";
+import arena from "../content/arena.json";
 
-const CHANNELS = [
-  { slug: "going-through-life", note: "Images en flux" },
-  { slug: "books-wybua5xvvoa", note: "Références & lectures" },
-  { slug: "poem-hg0zs9crmwa", note: "Textes & poésie" },
-];
+const CHANNELS = arena.channels;
 
 export default function Arena() {
-  const [cards, setCards] = useState(null);
+  const [details, setDetails] = useState({});
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all(
-      CHANNELS.map((c) =>
-        fetchChannel(c.slug, { per: 20 }).catch(() => null)
-      )
-    ).then((results) => {
-      if (cancelled) return;
-      setCards(
-        results.map((data, i) => ({
-          ...CHANNELS[i],
-          title: data?.title?.trim() || CHANNELS[i].slug,
-          length: data?.length,
-          cover: data ? data.contents?.map(blockImageUrl).find(Boolean) : null,
-        }))
-      );
+    CHANNELS.forEach((c) => {
+      Promise.all([
+        fetchChannelInfo(c.slug).catch(() => null),
+        fetchContents(c.slug, { per: 12 }).catch(() => null),
+      ]).then(([info, contents]) => {
+        if (cancelled) return;
+        // Les vraies images d'abord : les blocs "Link" n'ont souvent qu'une
+        // capture de page web, gardés seulement en dernier recours.
+        const blocks = contents?.blocks || [];
+        const covers = [
+          ...blocks.filter((b) => b.type !== "Link"),
+          ...blocks.filter((b) => b.type === "Link"),
+        ]
+          .map((b) => blockImage(b, "medium"))
+          .filter(Boolean)
+          .slice(0, 3);
+        setDetails((prev) => ({
+          ...prev,
+          [c.slug]: {
+            title: info?.title?.trim(),
+            description: info?.description?.plain?.trim(),
+            count: info?.counts?.contents,
+            covers,
+          },
+        }));
+      });
     });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const list = cards || CHANNELS;
-
   return (
     <div className="page page--wide">
       <div className="page-head">
-        <span className="eyebrow">02 / ARE.NA</span>
+        <span className="eyebrow">03 / ARE.NA</span>
         <h1>Are.na</h1>
       </div>
-      <a
-        className="btn"
-        href="https://www.are.na/zaji-idoo/channels"
-        target="_blank"
-        rel="noopener"
-      >
-        Tous les channels ↗
+      <a className="btn" href={arena.profile} target="_blank" rel="noopener">
+        Profil Are.na ↗
       </a>
 
       <div className="arena-grid">
-        {list.map((c) => (
-          <Link className="arena-card" to={`/arena/${c.slug}`} key={c.slug}>
-            {c.cover ? (
-              <img className="arena-card__img" src={c.cover} alt="" loading="lazy" />
-            ) : (
-              <div className="arena-card__img arena-card__img--empty" />
-            )}
-            <div className="arena-card__body">
-              <div className="arena-card__title">{c.title || c.slug}</div>
-              <div className="arena-card__note">{c.note}</div>
-              <div className="arena-card__cta">
-                {c.length !== undefined ? `${c.length} blocs — ` : ""}
-                Parcourir ↗
+        {CHANNELS.map((c, i) => {
+          const d = details[c.slug];
+          const note = c.note || d?.description;
+          return (
+            <Link className="arena-card" to={`/arena/${c.slug}`} key={c.slug}>
+              <div className={"arena-card__covers" + (d ? "" : " is-loading")}>
+                {d?.covers.length ? (
+                  d.covers.map((src, j) => <img key={j} src={src} alt="" loading="lazy" decoding="async" />)
+                ) : (
+                  <span className="arena-card__index">{String(i + 1).padStart(2, "0")}</span>
+                )}
               </div>
-            </div>
-          </Link>
-        ))}
+              <div className="arena-card__body">
+                <div className="arena-card__title">{d?.title || c.title || c.slug}</div>
+                {note && <div className="arena-card__note">{note}</div>}
+                <div className="arena-card__cta">
+                  {d?.count !== undefined ? `${d.count} blocs — ` : ""}
+                  Parcourir ↗
+                </div>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

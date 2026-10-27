@@ -41,6 +41,12 @@ function AppShell() {
     }
   }, [splashSeen, location.pathname]);
 
+  // Chaque nouvelle page s'ouvre en haut (sinon on garde le défilement de la
+  // page précédente, le document restant le même en SPA).
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   function handleEnter() {
     sessionStorage.setItem(SPLASH_KEY, "1");
     setSplashSeen(true);

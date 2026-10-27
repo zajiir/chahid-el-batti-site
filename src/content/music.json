@@ -1,6 +1,19 @@
 {
-  "trackUrl": "https://soundcloud.com/zajiir/starwalker",
-  "trackTitle": "zajîïr — starWalker",
+  "release": {
+    "title": "radio horizon",
+    "artist": "zajîïr (0kp)",
+    "date": "2026-09-07",
+    "cover": "/music/radio-horizon.webp",
+    "bandcampUrl": "https://zajr0kp.bandcamp.com/album/radio-horizon",
+    "bandcampAlbumId": "433639271",
+    "poem": "radio horizon\nwords already written in my قَدَر\nbecoming human\ncatching sound out loud\nrain on the window\nthe sea says nothing\nmelancolia in her own photography\nlife gave me الابتلاء\ni held it\nlook up\nnever forget the starzs...\nالصبور\nالشكور\nalready know",
+    "credits": "@gangaengon, @endorphxne, @spirituniv, @palomavauthier, @muddyoush — @delusion.cc",
+    "moreUrl": "https://delusion.cc/radio-horizon"
+  },
+  "video": {
+    "url": "",
+    "title": ""
+  },
   "platforms": [
     {
       "name": "SoundCloud",

@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-// images: [{ src, alt?, caption?: { title, medium, details, year } }]
+// images: [{ src, fallback?, alt?, caption?: { title, meta }, video? }]
+// `video` : URL d'un fichier vidéo, `src` sert alors d'affiche.
 // index: position dans `images`, ou null/undefined si fermé.
 // onNavigate: optionnel — si absent (ou une seule image), pas de flèches prev/next.
 export default function Lightbox({ images, index, onClose, onNavigate }) {
   const open = index != null && images && images[index];
   const canNavigate = onNavigate && images && images.length > 1;
+  const touchRef = useRef(null);
 
   function goTo(delta) {
     if (!canNavigate) return;
@@ -25,20 +27,60 @@ export default function Lightbox({ images, index, onClose, onNavigate }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, index, images]);
 
+  // Précharge les voisines : passer d'une image à l'autre reste instantané.
+  useEffect(() => {
+    if (!open || !canNavigate) return;
+    for (const d of [1, -1]) {
+      const img = new Image();
+      img.src = images[(index + d + images.length) % images.length].src;
+    }
+  }, [open, canNavigate, index, images]);
+
   if (!open) return null;
 
-  const { src, alt, caption } = images[index];
+  const { src, fallback, alt, caption, video } = images[index];
 
   return (
-    <div className="lightbox" onClick={onClose}>
-      <img src={src} alt={alt || caption?.title || ""} />
+    <div
+      className="lightbox"
+      onClick={onClose}
+      onTouchStart={(e) => {
+        touchRef.current = e.touches[0].clientX;
+      }}
+      onTouchEnd={(e) => {
+        if (touchRef.current == null) return;
+        const dx = e.changedTouches[0].clientX - touchRef.current;
+        touchRef.current = null;
+        if (Math.abs(dx) > 50) goTo(dx < 0 ? 1 : -1);
+      }}
+    >
+      {video ? (
+        <video
+          key={video}
+          src={video}
+          poster={src}
+          controls
+          autoPlay
+          playsInline
+          onClick={(e) => e.stopPropagation()}
+        />
+      ) : (
+        <img
+          key={src}
+          src={src}
+          alt={alt || caption?.title || ""}
+          onError={(e) => {
+            if (!fallback || e.currentTarget.dataset.fallback) return;
+            e.currentTarget.dataset.fallback = "1";
+            e.currentTarget.src = fallback;
+          }}
+        />
+      )}
 
       {caption && (
         <div className="lightbox__caption" onClick={(e) => e.stopPropagation()}>
           <strong>{caption.title}</strong>
-          <span>
-            {caption.medium} — {caption.details} — {caption.year}
-          </span>
+          {caption.meta && <span>{caption.meta}</span>}
         </div>
       )}
 

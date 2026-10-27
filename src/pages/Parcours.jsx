@@ -6,7 +6,7 @@ export default function Parcours() {
   return (
     <div className="page page--narrow">
       <div className="page-head">
-        <span className="eyebrow">06 / PARCOURS</span>
+        <span className="eyebrow">05 / PARCOURS</span>
         <h1>Parcours</h1>
       </div>
       {SECTIONS.map((section) => (

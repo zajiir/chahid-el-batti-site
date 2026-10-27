@@ -6,11 +6,10 @@ backend:
   # enregistrés côté Netlify, voir Site settings → OAuth) plutôt qu'en PKCE
   # direct — c'est l'intégration standard pour un site hébergé sur Netlify.
 
-# Pas de dossier de médias global : les photos de Travaux se gèrent
-# directement dans les dossiers src/assets/travaux/* sur GitHub (voir
-# README), pas besoin de passer par le CMS pour ça.
-media_folder: "src/assets/uploads"
-public_folder: "/src/assets/uploads"
+# Dossier par défaut des fichiers envoyés depuis l'admin (servis tels quels
+# par le site). Les images de Travaux ont leurs propres dossiers, plus bas.
+media_folder: "public/uploads"
+public_folder: "/uploads"
 
 publish_mode: simple
 locale: fr
@@ -18,24 +17,60 @@ locale: fr
 collections:
   - name: "pages"
     label: "📄 Pages du site"
-    description: "Le texte de chaque page — dans l'ordre où elles apparaissent dans le menu."
+    description: "Le texte de chaque page — dans l'ordre du menu. Les images de Travaux sont dans les 3 rubriques « Travaux » juste en dessous."
     files:
       - file: "src/content/home.json"
-        label: "1 — Accueil"
+        label: "Accueil"
         name: "home"
         fields:
           - { label: "Nom affiché", name: "name", widget: "string" }
           - { label: "Sous-titre", name: "subtitle", widget: "string" }
 
       - file: "src/content/music.json"
-        label: "2 — Music"
+        label: "02 — Music"
         name: "music"
         fields:
-          - label: "Lien SoundCloud du morceau mis en avant"
-            name: "trackUrl"
-            widget: "string"
-            hint: "Colle l'URL de la page du morceau sur SoundCloud."
-          - { label: "Titre du morceau affiché", name: "trackTitle", widget: "string" }
+          - label: "Sortie mise en avant"
+            name: "release"
+            widget: "object"
+            collapsed: false
+            fields:
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Artiste", name: "artist", widget: "string" }
+              - label: "Date de sortie"
+                name: "date"
+                widget: "datetime"
+                format: "YYYY-MM-DD"
+                date_format: "DD/MM/YYYY"
+                time_format: false
+              - label: "Pochette"
+                name: "cover"
+                widget: "image"
+                media_folder: "/public/music"
+                public_folder: "/music"
+                hint: "Image carrée — sert aussi de fond flouté à la page."
+              - { label: "Lien Bandcamp de l'album", name: "bandcampUrl", widget: "string" }
+              - label: "Identifiant Bandcamp de l'album"
+                name: "bandcampAlbumId"
+                widget: "string"
+                hint: "Sur Bandcamp : Partager / Intégrer → copier le nombre qui suit « album= » dans le code."
+              - label: "Texte / poème"
+                name: "poem"
+                widget: "text"
+                hint: "Une ligne = un vers. L'arabe s'affiche correctement tel quel."
+              - { label: "Crédits", name: "credits", widget: "text", required: false }
+              - { label: "Lien « en savoir plus »", name: "moreUrl", widget: "string", required: false }
+          - label: "Vidéo"
+            name: "video"
+            widget: "object"
+            collapsed: false
+            fields:
+              - label: "Lien de la vidéo"
+                name: "url"
+                widget: "string"
+                required: false
+                hint: "Lien YouTube ou Vimeo (ou fichier .mp4). Laisse vide : un emplacement « Vidéo — bientôt » s'affiche."
+              - { label: "Titre affiché", name: "title", widget: "string", required: false }
           - label: "Plateformes"
             name: "platforms"
             widget: "list"
@@ -45,15 +80,37 @@ collections:
               - { label: "Texte affiché (ex. Profil artiste)", name: "handle", widget: "string" }
               - { label: "URL", name: "url", widget: "string" }
 
+      - file: "src/content/arena.json"
+        label: "03 — Are.na"
+        name: "arena"
+        fields:
+          - { label: "Lien du profil Are.na", name: "profile", widget: "string" }
+          - label: "Channels affichés"
+            name: "channels"
+            widget: "list"
+            summary: "{{fields.title}}"
+            hint: "Dans l'ordre d'affichage. Le contenu (images, textes) se met à jour tout seul depuis Are.na."
+            fields:
+              - label: "Identifiant du channel"
+                name: "slug"
+                widget: "string"
+                hint: "La fin de l'adresse du channel : are.na/zaji-ir/<identifiant>"
+              - { label: "Nom affiché", name: "title", widget: "string" }
+              - label: "Note"
+                name: "note"
+                widget: "string"
+                required: false
+                hint: "Laisse vide pour reprendre la description du channel sur Are.na."
+
       - file: "src/content/friends.json"
-        label: "3 — Friends"
+        label: "04 — Friends"
         name: "friends"
         fields:
           - { label: "Titre", name: "heading", widget: "string" }
           - { label: "Message", name: "message", widget: "string" }
 
       - file: "src/content/parcours.json"
-        label: "4 — Parcours"
+        label: "05 — Parcours"
         name: "parcours"
         fields:
           - label: "Sections"
@@ -72,7 +129,7 @@ collections:
                   - { label: "Détail (lieu, ville...)", name: "detail", widget: "string" }
 
       - file: "src/content/about.json"
-        label: "5 — About"
+        label: "06 — About"
         name: "about"
         fields:
           - { label: "Email", name: "email", widget: "string" }
@@ -89,6 +146,92 @@ collections:
             fields:
               - { label: "Nom affiché", name: "name", widget: "string" }
               - { label: "URL", name: "url", widget: "string" }
+
+  # Travaux : une entrée = une image (+ sa légende). « Nouveau » pour en
+  # ajouter une, supprimer l'entrée pour la retirer du site.
+  - name: "travaux_photos"
+    label: "🖼 Travaux — Photos"
+    label_singular: "photo"
+    description: "Chaque entrée est une image de l'onglet Photos. Légende facultative : sans titre, l'image s'affiche sans légende."
+    folder: "src/content/travaux/photos"
+    media_folder: "/public/travaux/photos"
+    public_folder: "/travaux/photos"
+    format: "json"
+    extension: "json"
+    create: true
+    delete: true
+    identifier_field: "image"
+    slug: "{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    summary: "{{ordre}} · {{title | default('(sans légende)')}}"
+    sortable_fields: ["ordre", "title"]
+    fields:
+      - { label: "Image", name: "image", widget: "image", choose_url: false }
+      - { label: "Titre", name: "title", widget: "string", required: false }
+      - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
+      - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
+      - { label: "Année", name: "year", widget: "string", required: false }
+      - label: "Ordre"
+        name: "ordre"
+        widget: "number"
+        value_type: "int"
+        default: 0
+        hint: "Plus petit = affiché en premier. Les images existantes vont de 10 en 10 : mets 15 pour en glisser une entre la 1re et la 2e."
+
+  - name: "travaux_sculptures"
+    label: "🖼 Travaux — Sculptures / Installations"
+    label_singular: "sculpture / installation"
+    description: "Chaque entrée est une image de l'onglet Sculptures / Installations."
+    folder: "src/content/travaux/sculptures"
+    media_folder: "/public/travaux/sculptures"
+    public_folder: "/travaux/sculptures"
+    format: "json"
+    extension: "json"
+    create: true
+    delete: true
+    identifier_field: "image"
+    slug: "{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    summary: "{{ordre}} · {{title | default('(sans légende)')}}"
+    sortable_fields: ["ordre", "title"]
+    fields:
+      - { label: "Image", name: "image", widget: "image", choose_url: false }
+      - { label: "Titre", name: "title", widget: "string", required: false }
+      - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
+      - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
+      - { label: "Année", name: "year", widget: "string", required: false }
+      - label: "Ordre"
+        name: "ordre"
+        widget: "number"
+        value_type: "int"
+        default: 0
+        hint: "Plus petit = affiché en premier. Les images existantes vont de 10 en 10 : mets 15 pour en glisser une entre la 1re et la 2e."
+
+  - name: "travaux_graphiques"
+    label: "🖼 Travaux — Arts graphiques"
+    label_singular: "œuvre graphique"
+    description: "Chaque entrée est une image de l'onglet Arts graphiques."
+    folder: "src/content/travaux/graphiques"
+    media_folder: "/public/travaux/graphiques"
+    public_folder: "/travaux/graphiques"
+    format: "json"
+    extension: "json"
+    create: true
+    delete: true
+    identifier_field: "image"
+    slug: "{{year}}{{month}}{{day}}-{{hour}}{{minute}}{{second}}"
+    summary: "{{ordre}} · {{title | default('(sans légende)')}}"
+    sortable_fields: ["ordre", "title"]
+    fields:
+      - { label: "Image", name: "image", widget: "image", choose_url: false }
+      - { label: "Titre", name: "title", widget: "string", required: false }
+      - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
+      - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
+      - { label: "Année", name: "year", widget: "string", required: false }
+      - label: "Ordre"
+        name: "ordre"
+        widget: "number"
+        value_type: "int"
+        default: 0
+        hint: "Plus petit = affiché en premier. Les images existantes vont de 10 en 10 : mets 15 pour en glisser une entre la 1re et la 2e."
 
   - name: "reglages"
     label: "⚙️ Réglages globaux"

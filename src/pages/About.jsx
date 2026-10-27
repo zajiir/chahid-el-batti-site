@@ -4,7 +4,7 @@ export default function About() {
   return (
     <div className="page page--narrow">
       <div className="page-head">
-        <span className="eyebrow">04 / ABOUT</span>
+        <span className="eyebrow">06 / ABOUT</span>
         <h1>About</h1>
       </div>
 

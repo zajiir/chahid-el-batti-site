@@ -1,0 +1,13 @@
+# En-têtes de cache Netlify.
+# /assets/* : fichiers générés par Vite avec une empreinte dans le nom
+# (ils changent de nom à chaque modification) → cache permanent.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images : noms stables (une image remplacée garde son nom) → 1 jour.
+/travaux/*
+  Cache-Control: public, max-age=86400
+/music/*
+  Cache-Control: public, max-age=86400
+/uploads/*
+  Cache-Control: public, max-age=86400

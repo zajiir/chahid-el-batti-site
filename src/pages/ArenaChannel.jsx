@@ -1,48 +1,79 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchChannel, blockImageUrl, blockFullImageUrl } from "../lib/arena";
+import { fetchChannelInfo, fetchContents, blockImage, blockFullImage, blockText } from "../lib/arena";
 import Lightbox from "../components/Lightbox";
+import arena from "../content/arena.json";
 
-const CHANNELS = [
-  { slug: "going-through-life", label: "Going Through Life" },
-  { slug: "books-wybua5xvvoa", label: "Books" },
-  { slug: "poem-hg0zs9crmwa", label: "Poem" },
-];
 const PER_PAGE = 24;
+
+function isVideo(block) {
+  return block.attachment?.content_type?.startsWith("video/");
+}
 
 export default function ArenaChannel() {
   const { slug } = useParams();
-  const [title, setTitle] = useState(slug);
+  const known = arena.channels.find((c) => c.slug === slug);
+  const [title, setTitle] = useState(known?.title || slug);
   const [blocks, setBlocks] = useState([]);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [lightboxSrc, setLightboxSrc] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
     setBlocks([]);
-    setHasMore(true);
-    setTitle(slug);
-    loadPage(1, true);
-    window.scrollTo(0, 0);
+    setPage(1);
+    setLightboxIndex(null);
+    setTitle(known?.title || slug);
+    setLoading(true);
+    fetchChannelInfo(slug)
+      .then((info) => !cancelled && info.title && setTitle(info.title.trim()))
+      .catch(() => {});
+    fetchContents(slug, { page: 1, per: PER_PAGE })
+      .then((res) => {
+        if (cancelled) return;
+        setBlocks(res.blocks);
+        setHasMore(res.hasMore);
+      })
+      .catch(() => !cancelled && setHasMore(false))
+      .finally(() => !cancelled && setLoading(false));
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  function loadPage(p, replace = false) {
+  function loadMore() {
+    const next = page + 1;
     setLoading(true);
-    fetchChannel(slug, { page: p, per: PER_PAGE })
-      .then((data) => {
-        if (data.title) setTitle(data.title.trim());
-        const newBlocks = data.contents || [];
-        setBlocks((prev) => (replace ? newBlocks : [...prev, ...newBlocks]));
-        setHasMore(newBlocks.length === PER_PAGE);
-        setPage(p);
+    fetchContents(slug, { page: next, per: PER_PAGE })
+      .then((res) => {
+        setBlocks((prev) => [...prev, ...res.blocks]);
+        setHasMore(res.hasMore);
+        setPage(next);
       })
       .catch(() => setHasMore(false))
       .finally(() => setLoading(false));
   }
 
-  const others = CHANNELS.filter((c) => c.slug !== slug);
+  // Tous les blocs visuels du channel, navigables un par un dans la lightbox.
+  const media = useMemo(() => {
+    const list = [];
+    const indexById = {};
+    for (const b of blocks) {
+      if (b.type === "Channel" || !blockImage(b)) continue;
+      indexById[b.id] = list.length;
+      list.push({
+        src: blockImage(b, "large"),
+        fallback: blockFullImage(b),
+        video: isVideo(b) ? b.attachment.url : undefined,
+      });
+    }
+    return { list, indexById };
+  }, [blocks]);
+
+  const others = arena.channels.filter((c) => c.slug !== slug);
 
   return (
     <div className="page page--wide">
@@ -54,14 +85,18 @@ export default function ArenaChannel() {
       <div className="arena-detail__switch">
         {others.map((c) => (
           <Link key={c.slug} className="chip" to={`/arena/${c.slug}`}>
-            {c.label} ↗
+            {c.title} ↗
           </Link>
         ))}
       </div>
 
       <div className="arena-blocks">
         {blocks.map((block) => (
-          <BlockCard key={block.id} block={block} onImageClick={setLightboxSrc} />
+          <BlockCard
+            key={block.id}
+            block={block}
+            onOpen={() => setLightboxIndex(media.indexById[block.id])}
+          />
         ))}
       </div>
 
@@ -71,41 +106,40 @@ export default function ArenaChannel() {
         <p className="arena-loading">Aucun contenu trouvé pour ce channel.</p>
       )}
 
-      {!loading && hasMore && blocks.length > 0 && (
-        <button className="btn btn--accent arena-more" onClick={() => loadPage(page + 1)}>
+      {!loading && hasMore && (
+        <button className="btn btn--accent arena-more" onClick={loadMore}>
           Charger plus
         </button>
       )}
 
       <Lightbox
-        images={lightboxSrc ? [{ src: lightboxSrc }] : []}
-        index={lightboxSrc ? 0 : null}
-        onClose={() => setLightboxSrc(null)}
+        images={media.list}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={setLightboxIndex}
       />
     </div>
   );
 }
 
-function BlockCard({ block, onImageClick }) {
+function BlockCard({ block, onOpen }) {
   // Channel imbriqué : Are.na permet d'organiser des channels dans des
   // channels — on les rend navigables directement sur le site.
-  if (block.class === "Channel" && block.slug) {
+  if (block.type === "Channel" && block.slug) {
     return (
       <Link className="arena-block arena-block--channel" to={`/arena/${block.slug}`}>
-        <div className="arena-block__title">↳ {block.title || block.slug}</div>
+        <div className="arena-block__title">↳ {block.title?.trim() || block.slug}</div>
         <div className="arena-block__meta">Channel — Parcourir ↗</div>
       </Link>
     );
   }
 
-  const img = blockImageUrl(block);
+  const img = blockImage(block, "medium");
   if (img) {
     return (
-      <button
-        className="arena-block arena-block--image"
-        onClick={() => onImageClick(blockFullImageUrl(block))}
-      >
-        <img src={img} alt={block.title || ""} loading="lazy" />
+      <button className="arena-block arena-block--image" onClick={onOpen}>
+        <img src={img} alt={block.title || ""} loading="lazy" decoding="async" />
+        {isVideo(block) && <span className="arena-block__badge">▶</span>}
       </button>
     );
   }
@@ -124,11 +158,11 @@ function BlockCard({ block, onImageClick }) {
     );
   }
 
-  const text = block.content || block.description || "";
+  const text = blockText(block) || block.description?.plain || "";
   return (
     <div className="arena-block arena-block--text">
-      <div className="arena-block__title">{block.title || "Sans titre"}</div>
-      {text && <p>{text.length > 220 ? text.slice(0, 220) + "…" : text}</p>}
+      {block.title && <div className="arena-block__title">{block.title}</div>}
+      {text && <p>{text.length > 280 ? text.slice(0, 280) + "…" : text}</p>}
     </div>
   );
 }
