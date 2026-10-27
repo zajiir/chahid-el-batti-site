@@ -203,6 +203,11 @@ collections:
     fields:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
       - { label: "Titre", name: "title", widget: "string", required: false }
+      - label: "Titre (anglais)"
+        name: "title_en"
+        widget: "string"
+        required: false
+        hint: "À laisser vide pour garder le titre original de l'œuvre (l'usage). À remplir seulement pour une mention descriptive, ex. « Vue d'ensemble » → « Exhibition view »."
       - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
       - { label: "Technique / matériaux (anglais — vide = texte français)", name: "medium_en", widget: "string", required: false }
       - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
@@ -233,6 +238,11 @@ collections:
     fields:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
       - { label: "Titre", name: "title", widget: "string", required: false }
+      - label: "Titre (anglais)"
+        name: "title_en"
+        widget: "string"
+        required: false
+        hint: "À laisser vide pour garder le titre original de l'œuvre (l'usage). À remplir seulement pour une mention descriptive, ex. « Vue d'ensemble » → « Exhibition view »."
       - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
       - { label: "Technique / matériaux (anglais — vide = texte français)", name: "medium_en", widget: "string", required: false }
       - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
@@ -263,6 +273,11 @@ collections:
     fields:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
       - { label: "Titre", name: "title", widget: "string", required: false }
+      - label: "Titre (anglais)"
+        name: "title_en"
+        widget: "string"
+        required: false
+        hint: "À laisser vide pour garder le titre original de l'œuvre (l'usage). À remplir seulement pour une mention descriptive, ex. « Vue d'ensemble » → « Exhibition view »."
       - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
       - { label: "Technique / matériaux (anglais — vide = texte français)", name: "medium_en", widget: "string", required: false }
       - { label: "Dimensions / détails", name: "details", widget: "string", required: false }

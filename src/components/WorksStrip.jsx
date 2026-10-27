@@ -10,7 +10,7 @@ const EASE = 0.2; // part de la distance restante parcourue à chaque frame
 // focusIndex : image affichée en plein écran — la bande la garde centrée
 // derrière, pour la retrouver à la fermeture (ou en arrivant par son lien).
 export default function WorksStrip({ works, onOpen, focusIndex = null }) {
-  const { t } = useLang();
+  const { t, tr } = useLang();
   const scrollerRef = useRef(null);
   const suppressClickRef = useRef(0);
   const [current, setCurrent] = useState(0);
@@ -206,7 +206,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
               src={w.thumb}
               width={w.width}
               height={w.height}
-              alt={w.caption?.title || ""}
+              alt={(w.caption && tr(w.caption, "title")) || ""}
               loading={i < 3 ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
@@ -216,7 +216,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
                 e.currentTarget.src = w.original;
               }}
             />
-            {w.caption && <span className="strip__tag">{w.caption.title}</span>}
+            {w.caption && <span className="strip__tag">{tr(w.caption, "title")}</span>}
           </button>
         ))}
       </div>

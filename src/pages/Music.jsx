@@ -8,7 +8,7 @@ function formatDate(iso, lang) {
   const d = new Date(`${iso}T12:00:00`);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", {
-    day: "2-digit",
+    day: "numeric",
     month: "long",
     year: "numeric",
   });

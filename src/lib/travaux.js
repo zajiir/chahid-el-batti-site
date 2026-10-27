@@ -22,12 +22,14 @@ function variant(image, kind) {
   return m ? encodeURI(`/travaux/${kind}/${m[1]}/${m[2]}.webp`) : encodeURI(image);
 }
 
-// meta_en : technique / détails en anglais s'ils sont renseignés (CMS).
+// title_en / meta_en : versions anglaises (CMS). Le titre original de l'œuvre
+// est gardé tant que title_en est vide.
 function caption(e) {
   if (!e.title) return null;
   const join = (...parts) => parts.filter(Boolean).join(" — ");
   return {
     title: e.title,
+    title_en: e.title_en,
     meta: join(e.medium, e.details, e.year),
     meta_en: join(e.medium_en || e.medium, e.details_en || e.details, e.year),
   };

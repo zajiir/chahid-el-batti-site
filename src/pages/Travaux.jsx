@@ -23,7 +23,7 @@ export default function Travaux() {
       works.map((w) => ({
         src: w.large,
         fallback: w.original,
-        caption: w.caption && { title: w.caption.title, meta: tr(w.caption, "meta") },
+        caption: w.caption && { title: tr(w.caption, "title"), meta: tr(w.caption, "meta") },
       })),
     [works, tr]
   );
