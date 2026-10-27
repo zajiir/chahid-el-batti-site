@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchContents, blockImage, blockText } from "../lib/arena";
 import Plane from "../components/Plane";
+import { useLang } from "../lib/i18n";
 import home from "../content/home.json";
 
 const CHANNEL = "going-through-life";
@@ -37,6 +38,7 @@ export default function Home() {
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState("loading"); // loading | ok | error
   const nameRef = useRef(null);
+  const { t, tr } = useLang();
 
   useEffect(() => {
     let cancelled = false;
@@ -77,11 +79,11 @@ export default function Home() {
             )}
           </div>
         )}
-        {status === "error" && <div className="hero__fallback">Images non disponibles</div>}
+        {status === "error" && <div className="hero__fallback">{t("home.noImages")}</div>}
       </div>
       <div className="hero__content">
         <h1 ref={nameRef}>{home.name}</h1>
-        <p className="eyebrow">{home.subtitle}</p>
+        <p className="eyebrow">{tr(home, "subtitle")}</p>
       </div>
       <div className="hero__hint">↓</div>
       <Plane anchorRef={nameRef} mode="roam" zBehind={0} zFront={2} />

@@ -13,11 +13,8 @@ const dimsModule = import.meta.glob("../generated/travaux-dims.json", {
 });
 const DIMS = Object.values(dimsModule)[0] || {};
 
-export const CATEGORIES = [
-  { id: "photos", label: "Photos" },
-  { id: "sculptures", label: "Sculptures / Installations" },
-  { id: "graphiques", label: "Arts graphiques" },
-];
+// Libellés traduits dans src/lib/i18n.jsx ("works.cat.<id>").
+export const CATEGORIES = ["photos", "sculptures", "graphiques"];
 
 // "/travaux/sculptures/3.jpg" -> "/travaux/_thumbs/sculptures/3.webp"
 function variant(image, kind) {
@@ -25,10 +22,15 @@ function variant(image, kind) {
   return m ? encodeURI(`/travaux/${kind}/${m[1]}/${m[2]}.webp`) : encodeURI(image);
 }
 
+// meta_en : technique / détails en anglais s'ils sont renseignés (CMS).
 function caption(e) {
   if (!e.title) return null;
-  const meta = [e.medium, e.details, e.year].filter(Boolean).join(" — ");
-  return { title: e.title, meta };
+  const join = (...parts) => parts.filter(Boolean).join(" — ");
+  return {
+    title: e.title,
+    meta: join(e.medium, e.details, e.year),
+    meta_en: join(e.medium_en || e.medium, e.details_en || e.details, e.year),
+  };
 }
 
 const byCategory = {};
@@ -39,6 +41,8 @@ for (const [path, e] of Object.entries(entries)) {
   const [width, height] = DIMS[e.image] || [];
   (byCategory[cat] ||= []).push({
     key: path,
+    // Nom de la fiche, repris dans l'adresse de l'œuvre : #/travaux/<cat>/<slug>
+    slug: parts[parts.length - 1].replace(/\.json$/, ""),
     original: encodeURI(e.image),
     thumb: variant(e.image, "_thumbs"),
     large: variant(e.image, "_large"),

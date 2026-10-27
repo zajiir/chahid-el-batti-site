@@ -7,23 +7,38 @@ import {
   PictoTravaux,
   PictoParcours,
 } from "./icons/PictoIcons";
+import { useLang } from "../lib/i18n";
 
 const ITEMS = [
-  { to: "/", label: "Accueil", Icon: PictoAccueil },
-  { to: "/travaux", label: "Travaux", Icon: PictoTravaux },
-  { to: "/music", label: "Music", Icon: PictoMusic },
-  { to: "/arena", label: "Are.na", Icon: PictoAreNa },
-  { to: "/friends", label: "Friends (together)", glyph: "19" },
-  { to: "/parcours", label: "Parcours", Icon: PictoParcours },
-  { to: "/about", label: "About", Icon: PictoAbout },
+  { to: "/", label: "nav.home", Icon: PictoAccueil },
+  { to: "/travaux", label: "nav.works", Icon: PictoTravaux },
+  { to: "/music", label: "nav.music", Icon: PictoMusic },
+  { to: "/arena", label: "nav.arena", Icon: PictoAreNa },
+  { to: "/friends", label: "nav.friends", glyph: "19" },
+  { to: "/parcours", label: "nav.cv", Icon: PictoParcours },
+  { to: "/about", label: "nav.about", Icon: PictoAbout },
 ];
 
 export default function Nav() {
+  const { lang, setLang, t } = useLang();
+
   return (
     <nav className="nav">
-      <NavLink to="/" className="nav__logo" aria-label="Accueil — Chahîd EL BATTI">
-        C.E.B
-      </NavLink>
+      <div className="nav__left">
+        <NavLink to="/" className="nav__logo" aria-label={t("nav.logo")}>
+          C.E.B
+        </NavLink>
+        <button
+          className="nav__lang"
+          onClick={() => setLang(lang === "fr" ? "en" : "fr")}
+          aria-label={t("lang.switch")}
+          title={t("lang.switch")}
+        >
+          <span className={lang === "fr" ? "is-active" : ""}>FR</span>
+          <span className="nav__lang-sep">/</span>
+          <span className={lang === "en" ? "is-active" : ""}>EN</span>
+        </button>
+      </div>
       <ul className="nav__list">
         {ITEMS.map((item) => (
           <li key={item.to}>
@@ -33,8 +48,8 @@ export default function Nav() {
               className={({ isActive }) =>
                 "nav__item" + (isActive ? " nav__item--active" : "")
               }
-              aria-label={item.label}
-              title={item.label}
+              aria-label={t(item.label)}
+              title={t(item.label)}
             >
               {item.Icon ? (
                 <item.Icon aria-hidden="true" />
@@ -43,7 +58,7 @@ export default function Nav() {
                   {item.glyph}
                 </span>
               )}
-              <span className="nav__tooltip">{item.label}</span>
+              <span className="nav__tooltip">{t(item.label)}</span>
             </NavLink>
           </li>
         ))}

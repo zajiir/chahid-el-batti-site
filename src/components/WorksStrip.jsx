@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLang } from "../lib/i18n";
 
 const DRAG_THRESHOLD = 6; // px — au-delà, un appui souris est un glissé, pas un clic
 const EASE = 0.2; // part de la distance restante parcourue à chaque frame
@@ -6,7 +7,10 @@ const EASE = 0.2; // part de la distance restante parcourue à chaque frame
 // Bande horizontale en défilement natif : swipe trackpad / tactile gérés par
 // le navigateur, molette verticale convertie en défilement horizontal lissé,
 // glisser à la souris, flèches et clavier. Un clic ouvre le plein écran.
-export default function WorksStrip({ works, onOpen }) {
+// focusIndex : image affichée en plein écran — la bande la garde centrée
+// derrière, pour la retrouver à la fermeture (ou en arrivant par son lien).
+export default function WorksStrip({ works, onOpen, focusIndex = null }) {
+  const { t } = useLang();
   const scrollerRef = useRef(null);
   const suppressClickRef = useRef(0);
   const [current, setCurrent] = useState(0);
@@ -17,6 +21,13 @@ export default function WorksStrip({ works, onOpen }) {
   useEffect(() => {
     if (scrollerRef.current) scrollerRef.current.scrollLeft = 0;
   }, [works]);
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    const item = focusIndex != null && el?.children[focusIndex];
+    if (!item) return;
+    el.scrollLeft = item.offsetLeft - (el.clientWidth - item.offsetWidth) / 2;
+  }, [focusIndex, works]);
 
   // Compteur + état des flèches, recalculés au plus une fois par frame.
   useEffect(() => {
@@ -187,7 +198,7 @@ export default function WorksStrip({ works, onOpen }) {
         ref={scrollerRef}
         tabIndex={0}
         onKeyDown={onKeyDown}
-        aria-label="Galerie — faire défiler horizontalement, cliquer une image pour l'agrandir"
+        aria-label={t("strip.label")}
       >
         {works.map((w, i) => (
           <button key={w.key} className="strip__item" onClick={() => handleClick(i)}>
@@ -213,7 +224,7 @@ export default function WorksStrip({ works, onOpen }) {
       <button
         className={"strip__arrow strip__arrow--prev" + (atStart ? " is-hidden" : "")}
         onClick={() => go(-1)}
-        aria-label="Images précédentes"
+        aria-label={t("strip.prev")}
         tabIndex={atStart ? -1 : 0}
       >
         ←
@@ -221,7 +232,7 @@ export default function WorksStrip({ works, onOpen }) {
       <button
         className={"strip__arrow strip__arrow--next" + (atEnd ? " is-hidden" : "")}
         onClick={() => go(1)}
-        aria-label="Images suivantes"
+        aria-label={t("strip.next")}
         tabIndex={atEnd ? -1 : 0}
       >
         →

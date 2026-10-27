@@ -1,6 +1,8 @@
 import about from "../content/about.json";
+import { useLang } from "../lib/i18n";
 
 export default function About() {
+  const { tr } = useLang();
   return (
     <div className="page page--narrow">
       <div className="page-head">
@@ -15,11 +17,11 @@ export default function About() {
         <div>
           <a href={`tel:${about.phone.replace(/\s+/g, "")}`}>{about.phone}</a>
         </div>
-        <div>{about.location}</div>
+        <div>{tr(about, "location")}</div>
       </div>
 
       <div className="about__bio">
-        {about.bio.map((paragraph, i) => (
+        {tr(about, "bio").map((paragraph, i) => (
           <p key={i}>{paragraph}</p>
         ))}
       </div>

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { fetchChannelInfo, fetchContents, blockImage, blockFullImage, blockText } from "../lib/arena";
 import Lightbox from "../components/Lightbox";
 import arena from "../content/arena.json";
+import { useLang } from "../lib/i18n";
 
 const PER_PAGE = 24;
 
@@ -11,6 +12,7 @@ function isVideo(block) {
 }
 
 export default function ArenaChannel() {
+  const { t } = useLang();
   const { slug } = useParams();
   const known = arena.channels.find((c) => c.slug === slug);
   const [title, setTitle] = useState(known?.title || slug);
@@ -78,7 +80,7 @@ export default function ArenaChannel() {
   return (
     <div className="page page--wide">
       <Link className="btn" to="/arena">
-        ← Tous les channels
+        {t("arena.all")}
       </Link>
       <h1 className="arena-detail__title">{title}</h1>
 
@@ -100,15 +102,15 @@ export default function ArenaChannel() {
         ))}
       </div>
 
-      {loading && <p className="arena-loading">Chargement…</p>}
+      {loading && <p className="arena-loading">{t("arena.loading")}</p>}
 
       {!loading && blocks.length === 0 && (
-        <p className="arena-loading">Aucun contenu trouvé pour ce channel.</p>
+        <p className="arena-loading">{t("arena.empty")}</p>
       )}
 
       {!loading && hasMore && (
         <button className="btn btn--accent arena-more" onClick={loadMore}>
-          Charger plus
+          {t("arena.more")}
         </button>
       )}
 
@@ -123,13 +125,14 @@ export default function ArenaChannel() {
 }
 
 function BlockCard({ block, onOpen }) {
+  const { t } = useLang();
   // Channel imbriqué : Are.na permet d'organiser des channels dans des
   // channels — on les rend navigables directement sur le site.
   if (block.type === "Channel" && block.slug) {
     return (
       <Link className="arena-block arena-block--channel" to={`/arena/${block.slug}`}>
         <div className="arena-block__title">↳ {block.title?.trim() || block.slug}</div>
-        <div className="arena-block__meta">Channel — Parcourir ↗</div>
+        <div className="arena-block__meta">{t("arena.channel")}</div>
       </Link>
     );
   }
@@ -153,7 +156,7 @@ function BlockCard({ block, onOpen }) {
         rel="noopener"
       >
         <div className="arena-block__title">{block.title || block.source.url}</div>
-        <div className="arena-block__meta">Lien ↗</div>
+        <div className="arena-block__meta">{t("arena.link")}</div>
       </a>
     );
   }

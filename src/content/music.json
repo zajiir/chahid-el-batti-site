@@ -12,32 +12,38 @@
   },
   "video": {
     "url": "",
-    "title": ""
+    "title": "",
+    "title_en": ""
   },
   "platforms": [
     {
       "name": "SoundCloud",
       "handle": "soundcloud.com/zajiir",
+      "handle_en": "",
       "url": "https://soundcloud.com/zajiir"
     },
     {
       "name": "Spotify",
       "handle": "Profil artiste",
+      "handle_en": "Artist profile",
       "url": "https://open.spotify.com/intl-fr/artist/3WEBoiCmld8L1lnwtnYfew"
     },
     {
       "name": "Bandcamp",
       "handle": "zajr0kp.bandcamp.com",
+      "handle_en": "",
       "url": "https://zajr0kp.bandcamp.com/"
     },
     {
       "name": "YouTube Music",
       "handle": "Chaîne officielle",
+      "handle_en": "Official channel",
       "url": "https://music.youtube.com/channel/UCk7on94O07LCAbs4KGmhZpQ"
     },
     {
       "name": "Apple Music",
       "handle": "Profil artiste",
+      "handle_en": "Artist profile",
       "url": "https://music.apple.com/fr/artist/zaj%C3%AE%C3%AFr/1833649460"
     }
   ]

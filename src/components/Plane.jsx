@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
-// Petit avion (nez vers le haut dans son viewBox, pivoté selon sa trajectoire).
-const PLANE_PATH =
-  "M12 2c.8 0 1.4.7 1.4 1.5V9l8.6 5.2v2.1l-8.6-2.6v5.2l2.3 1.7V22L12 21l-3.7 1v-1.4l2.3-1.7v-5.2L2 16.3v-2.1L10.6 9V3.5C10.6 2.7 11.2 2 12 2z";
+import { drawPlane, normalize } from "../lib/planeModel";
 
 const LINEAR_SPEED = 190; // px/s sur l'orbite
 const DODGE_RADIUS = 120; // px — en deçà, l'avion esquive le curseur
@@ -16,6 +13,7 @@ const HEARTS = [
   [0, -150, 1.2],
   [-40, 140, 0.95],
 ];
+const TAU = Math.PI * 2;
 
 const smooth = (x) => x * x * (3 - 2 * x);
 
@@ -24,8 +22,9 @@ const smooth = (x) => x * x * (3 - 2 * x);
 // mode "roam" : tourne autour de l'ancre (le nom sur l'accueil), puis part
 //   se balader sur toute la page avant de revenir.
 // zBehind / zFront : z-index quand l'avion passe derrière / devant l'ancre.
-export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 1, zFront = 3 }) {
+export default function Plane({ anchorRef, mode = "orbit", size = 34, zBehind = 1, zFront = 3 }) {
   const planeRef = useRef(null);
+  const canvasRef = useRef(null);
   const caughtRef = useRef(null);
   const [enabled] = useState(
     () => !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
@@ -35,15 +34,24 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
   useEffect(() => {
     if (!enabled) return;
     const el = planeRef.current;
+    const canvas = canvasRef.current;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const px = Math.round(size * dpr);
+    canvas.width = px;
+    canvas.height = px;
+    const ctx = canvas.getContext("2d");
+
     let raf = 0;
     let prev = performance.now();
     let t = Math.random() * 60;
-    let theta = Math.random() * Math.PI * 2;
+    let theta = Math.random() * TAU;
     let speed = 1;
     let anchor = null;
     let lastPos = null;
+    let forward = [1, 0, 0];
     let heading = 0;
-    let spin = 0;
+    let bank = 0;
+    let roll = 0; // tonneau quand on l'attrape
     let caughtUntil = 0;
     let zIndex = null;
     // Balade (mode roam) : alterne entre "autour du nom" et "partout".
@@ -87,13 +95,14 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
       const R = Math.min(anchor.w * (0.95 + 0.5 * Math.sin(t * 0.17)), maxR);
       theta += ((LINEAR_SPEED * speed) / Math.max(R, 40)) * dt;
       const tilt = 0.38 + 0.25 * Math.sin(t * 0.11);
-      const roll = -0.35 + 0.45 * Math.sin(t * 0.07 + 1);
+      const rollAngle = -0.35 + 0.45 * Math.sin(t * 0.07 + 1);
       const x0 = R * Math.cos(theta);
       const z0 = R * Math.sin(theta);
       const y = z0 * Math.sin(tilt);
       return {
-        x: anchor.cx + x0 * Math.cos(roll) - y * Math.sin(roll),
-        y: anchor.cy + x0 * Math.sin(roll) + y * Math.cos(roll),
+        x: anchor.cx + x0 * Math.cos(rollAngle) - y * Math.sin(rollAngle),
+        y: anchor.cy + x0 * Math.sin(rollAngle) + y * Math.cos(rollAngle),
+        z: z0 * Math.cos(tilt),
         depth: Math.sin(theta) * Math.cos(tilt),
       };
     }
@@ -102,12 +111,13 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
       const rx = anchor.w / 2 + 50;
       const ry = anchor.h / 2 + 60;
       theta += ((LINEAR_SPEED * 1.3 * speed) / rx) * dt;
-      const roll = -0.12 + 0.1 * Math.sin(t * 0.09);
+      const rollAngle = -0.12 + 0.1 * Math.sin(t * 0.09);
       const x0 = rx * Math.cos(theta);
       const y0 = ry * Math.sin(theta);
       return {
-        x: anchor.cx + x0 * Math.cos(roll) - y0 * Math.sin(roll),
-        y: anchor.cy + x0 * Math.sin(roll) + y0 * Math.cos(roll),
+        x: anchor.cx + x0 * Math.cos(rollAngle) - y0 * Math.sin(rollAngle),
+        y: anchor.cy + x0 * Math.sin(rollAngle) + y0 * Math.cos(rollAngle),
+        z: Math.sin(theta) * ry,
         depth: Math.sin(theta),
       };
     }
@@ -119,6 +129,7 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
       return {
         x: vw / 2 + (vw / 2 - 50) * Math.sin(k * 0.31 + 0.5),
         y: vh / 2 + (vh / 2 - 90) * Math.sin(k * 0.47),
+        z: 0,
         depth: 1,
       };
     }
@@ -128,7 +139,7 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
       const dt = Math.min((now - prev) / 1000, 0.05);
       prev = now;
       t += dt;
-      if (!anchor) return;
+      if (!anchor || !dt) return;
 
       let p;
       if (mode === "roam") {
@@ -143,6 +154,7 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
         p = {
           x: a.x + (w.x - a.x) * b,
           y: a.y + (w.y - a.y) * b,
+          z: a.z + (w.z - a.z) * b,
           depth: b > 0.5 ? 1 : a.depth,
         };
       } else {
@@ -180,30 +192,42 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
 
       const x = p.x + offset.x;
       const y = p.y + offset.y;
+      const z = p.z;
 
+      // Orientation : le nez suit la trajectoire 3D, l'avion s'incline dans
+      // les virages (roulis proportionnel à la vitesse de rotation du cap).
       if (lastPos) {
-        const vx = x - lastPos.x;
-        const vy = y - lastPos.y;
-        if (vx * vx + vy * vy > 0.04) {
-          const target = Math.atan2(vy, vx);
-          let delta = target - heading;
-          delta = Math.atan2(Math.sin(delta), Math.cos(delta));
-          heading += delta * (1 - Math.exp(-12 * dt));
+        const v = [x - lastPos[0], y - lastPos[1], z - lastPos[2]];
+        if (v[0] * v[0] + v[1] * v[1] + v[2] * v[2] > 0.01) {
+          const k = 1 - Math.exp(-10 * dt);
+          const n = normalize(v);
+          forward = normalize(forward.map((c, i) => c + (n[i] - c) * k));
         }
       }
-      lastPos = { x, y };
+      lastPos = [x, y, z];
+      const flat = Math.hypot(forward[0], forward[1]);
+      const h = Math.atan2(forward[1], forward[0]);
+      const turn = Math.atan2(Math.sin(h - heading), Math.cos(h - heading)) / dt;
+      heading = h;
+      const bankTarget = Math.max(-1.1, Math.min(1.1, turn * 0.4 * flat));
+      bank += (bankTarget - bank) * (1 - Math.exp(-5 * dt));
 
       const caught = now < caughtUntil;
-      if (caught) spin += dt * 14;
-      else spin *= Math.exp(-10 * dt);
+      if (caught) {
+        roll += dt * 12;
+      } else {
+        const rest = Math.round(roll / TAU) * TAU;
+        roll += (rest - roll) * (1 - Math.exp(-6 * dt));
+      }
 
-      const scale = (mode === "orbit" ? 1 + 0.28 * p.depth : 1.08) * (caught ? 1.35 : 1);
-      const rot = heading + Math.PI / 2 + spin;
-      el.style.transform = `translate3d(${x - size / 2}px, ${y - size / 2}px, 0) rotate(${rot}rad) scale(${scale})`;
-      const z = p.depth > 0 ? zFront : zBehind;
-      if (z !== zIndex) {
-        zIndex = z;
-        el.style.zIndex = z;
+      drawPlane(ctx, px, forward, bank + roll);
+
+      const scale = (mode === "orbit" ? 1 + 0.28 * p.depth : 1.08) * (caught ? 1.3 : 1);
+      el.style.transform = `translate3d(${x - size / 2}px, ${y - size / 2}px, 0) scale(${scale})`;
+      const zi = p.depth > 0 ? zFront : zBehind;
+      if (zi !== zIndex) {
+        zIndex = zi;
+        el.style.zIndex = zi;
       }
       if (!el.classList.contains("is-ready")) el.classList.add("is-ready");
     }
@@ -240,9 +264,7 @@ export default function Plane({ anchorRef, mode = "orbit", size = 26, zBehind = 
           setLove((l) => ({ key: l.key + 1, visible: true }));
         }}
       >
-        <svg viewBox="0 0 24 24">
-          <path d={PLANE_PATH} />
-        </svg>
+        <canvas ref={canvasRef} />
       </div>
 
       {love.visible && (

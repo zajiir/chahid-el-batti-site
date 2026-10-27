@@ -1,12 +1,17 @@
 import { useState } from "react";
 import music from "../content/music.json";
+import { useLang } from "../lib/i18n";
 
 const { release: RELEASE, video: VIDEO, platforms: PLATFORMS } = music;
 
-function formatDate(iso) {
+function formatDate(iso, lang) {
   const d = new Date(`${iso}T12:00:00`);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  return d.toLocaleDateString(lang === "en" ? "en-GB" : "fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 // YouTube (watch, youtu.be, shorts), Vimeo, ou lien direct vers un fichier vidéo.
@@ -26,13 +31,14 @@ function parseVideo(url) {
 }
 
 function VideoSlot({ url, title, fallbackPoster }) {
+  const { t } = useLang();
   const [playing, setPlaying] = useState(false);
   const video = parseVideo(url);
 
   if (!video) {
     return (
       <div className="video-slot video-slot--empty" style={{ backgroundImage: `url(${fallbackPoster})` }}>
-        <span>Vidéo — bientôt</span>
+        <span>{t("music.videoSoon")}</span>
       </div>
     );
   }
@@ -51,7 +57,7 @@ function VideoSlot({ url, title, fallbackPoster }) {
       {playing ? (
         <iframe
           src={video.src}
-          title={title || "Vidéo"}
+          title={title || t("music.video")}
           allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
           allowFullScreen
         />
@@ -60,7 +66,7 @@ function VideoSlot({ url, title, fallbackPoster }) {
           className="video-slot__poster"
           style={{ backgroundImage: `url(${video.poster || fallbackPoster})` }}
           onClick={() => setPlaying(true)}
-          aria-label={`Lire la vidéo${title ? ` : ${title}` : ""}`}
+          aria-label={`${t("music.play")}${title ? ` : ${title}` : ""}`}
         >
           <span className="video-slot__play">▶</span>
         </button>
@@ -70,7 +76,9 @@ function VideoSlot({ url, title, fallbackPoster }) {
 }
 
 export default function Music() {
-  const poem = (RELEASE.poem || "").split("\n");
+  const { lang, t, tr } = useLang();
+  const poem = (tr(RELEASE, "poem") || "").split("\n");
+  const videoTitle = tr(VIDEO, "title");
 
   return (
     <>
@@ -83,11 +91,13 @@ export default function Music() {
 
         <section className="release">
           <a className="release__cover" href={RELEASE.bandcampUrl} target="_blank" rel="noopener">
-            <img src={RELEASE.cover} alt={`Pochette — ${RELEASE.title}`} width="1200" height="1200" />
+            <img src={RELEASE.cover} alt={t("music.cover", { title: RELEASE.title })} width="1200" height="1200" />
           </a>
 
           <div className="release__info">
-            <span className="release__tag">Out now — {formatDate(RELEASE.date)}</span>
+            <span className="release__tag">
+              {t("music.outNow", { date: formatDate(RELEASE.date, lang) })}
+            </span>
             <h2 className="release__title">{RELEASE.title}</h2>
             <div className="release__artist">{RELEASE.artist}</div>
 
@@ -101,7 +111,7 @@ export default function Music() {
             </div>
 
             <a className="btn btn--accent" href={RELEASE.bandcampUrl} target="_blank" rel="noopener">
-              Acheter / écouter sur Bandcamp ↗
+              {t("music.buy")}
             </a>
           </div>
         </section>
@@ -124,24 +134,24 @@ export default function Music() {
         </section>
 
         <section className="release__video">
-          <h2 className="music__section-title">{VIDEO.title || "Vidéo"}</h2>
-          <VideoSlot url={VIDEO.url} title={VIDEO.title} fallbackPoster={RELEASE.cover} />
+          <h2 className="music__section-title">{videoTitle || t("music.video")}</h2>
+          <VideoSlot url={VIDEO.url} title={videoTitle} fallbackPoster={RELEASE.cover} />
         </section>
 
         {RELEASE.credits && (
           <section className="release__credits">
-            <h2 className="music__section-title">Crédits</h2>
-            <p>{RELEASE.credits}</p>
+            <h2 className="music__section-title">{t("music.credits")}</h2>
+            <p>{tr(RELEASE, "credits")}</p>
           </section>
         )}
 
         <section>
-          <h2 className="music__section-title">Plateformes</h2>
+          <h2 className="music__section-title">{t("music.platforms")}</h2>
           <div className="platforms">
             {PLATFORMS.map((p) => (
               <a key={p.name} href={p.url} target="_blank" rel="noopener" className="platform">
                 <strong>{p.name}</strong>
-                <span>{p.handle}</span>
+                <span>{tr(p, "handle")}</span>
               </a>
             ))}
           </div>

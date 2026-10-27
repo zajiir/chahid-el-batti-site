@@ -4,6 +4,7 @@ import Nav from "./components/Nav";
 import RadioPlayer from "./components/RadioPlayer";
 import Marquee from "./components/Marquee";
 import { applyDayNightAttribute } from "./lib/dayNight";
+import { LangProvider, useLang } from "./lib/i18n";
 import site from "./content/site.json";
 import Home from "./pages/Home";
 import Travaux from "./pages/Travaux";
@@ -25,6 +26,7 @@ const SPLASH_KEY = "splash-seen";
 // radio continue de jouer et le footer reste identique d'une page à l'autre.
 function AppShell() {
   const location = useLocation();
+  const { tr } = useLang();
   const [splashSeen, setSplashSeen] = useState(
     () => sessionStorage.getItem(SPLASH_KEY) === "1"
   );
@@ -42,10 +44,12 @@ function AppShell() {
   }, [splashSeen, location.pathname]);
 
   // Chaque nouvelle page s'ouvre en haut (sinon on garde le défilement de la
-  // page précédente, le document restant le même en SPA).
+  // page précédente, le document restant le même en SPA). Dans Travaux, changer
+  // d'onglet ou ouvrir une œuvre (qui a sa propre adresse) ne compte pas.
+  const scrollKey = location.pathname.startsWith("/travaux") ? "/travaux" : location.pathname;
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+  }, [scrollKey]);
 
   function handleEnter() {
     sessionStorage.setItem(SPLASH_KEY, "1");
@@ -66,6 +70,8 @@ function AppShell() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/travaux" element={<Travaux />} />
+        <Route path="/travaux/:cat" element={<Travaux />} />
+        <Route path="/travaux/:cat/:slug" element={<Travaux />} />
         <Route path="/music" element={<Music />} />
         <Route path="/arena" element={<Arena />} />
         <Route path="/arena/:slug" element={<ArenaChannel />} />
@@ -74,7 +80,7 @@ function AppShell() {
         <Route path="/friends" element={<Friends />} />
       </Routes>
       <RadioPlayer />
-      <Marquee text={site.marquee} />
+      <Marquee text={tr(site, "marquee")} />
     </>
   );
 }
@@ -89,8 +95,10 @@ export default function App() {
   }, []);
 
   return (
-    <HashRouter>
-      <AppShell />
-    </HashRouter>
+    <LangProvider>
+      <HashRouter>
+        <AppShell />
+      </HashRouter>
+    </LangProvider>
   );
 }

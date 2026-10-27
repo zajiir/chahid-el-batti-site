@@ -2,10 +2,12 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchChannelInfo, fetchContents, blockImage } from "../lib/arena";
 import arena from "../content/arena.json";
+import { useLang } from "../lib/i18n";
 
 const CHANNELS = arena.channels;
 
 export default function Arena() {
+  const { t, tr } = useLang();
   const [details, setDetails] = useState({});
 
   useEffect(() => {
@@ -49,13 +51,13 @@ export default function Arena() {
         <h1>Are.na</h1>
       </div>
       <a className="btn" href={arena.profile} target="_blank" rel="noopener">
-        Profil Are.na ↗
+        {t("arena.profile")}
       </a>
 
       <div className="arena-grid">
         {CHANNELS.map((c, i) => {
           const d = details[c.slug];
-          const note = c.note || d?.description;
+          const note = tr(c, "note") || d?.description;
           return (
             <Link className="arena-card" to={`/arena/${c.slug}`} key={c.slug}>
               <div className={"arena-card__covers" + (d ? "" : " is-loading")}>
@@ -69,8 +71,8 @@ export default function Arena() {
                 <div className="arena-card__title">{d?.title || c.title || c.slug}</div>
                 {note && <div className="arena-card__note">{note}</div>}
                 <div className="arena-card__cta">
-                  {d?.count !== undefined ? `${d.count} blocs — ` : ""}
-                  Parcourir ↗
+                  {d?.count !== undefined ? t("arena.blocks", { n: d.count }) : ""}
+                  {t("arena.browse")}
                 </div>
               </div>
             </Link>

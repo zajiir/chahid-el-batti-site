@@ -2,14 +2,27 @@
   "email": "chahidelbatti@gmail.com",
   "phone": "06 29 41 02 17",
   "location": "Paris — Atelier Julien Sirjacq",
+  "location_en": "Paris — Julien Sirjacq's studio",
   "bio": [
     "Chahid El Batti (né en 2000 à Maisons-Laffitte) vit et travaille à Paris, au sein de l’atelier de Julien Sirjacq. Après un parcours initial dans les sciences, comprenant un DUT Génie thermique et énergie puis une année en école d’ingénieur, il s’oriente vers une pratique artistique aux Beaux-Arts de Paris. En parallèle, il développe une activité musicale indépendante avec le groupe Délusions Records, intervenant comme producteur et sérigraphe.",
     "Il s’intéresse à l’intersection des techniques, des rythmes et des images. Sa démarche artistique est multidisciplinaire : il travaille à partir de fragments, explore différents médiums et expérimente les interactions entre images et matériaux, produisant des formes brutes et sensibles. Chahid El Batti aborde l’impermanence et la contradiction comme des éléments moteurs de sa pratique. Il s’inspire de la spiritualité musulmane, des univers virtuels et de sa formation scientifique pour élaborer des protocoles expérimentaux.",
     "Ses médiums incluent le collage, la photographie, la récupération d’objets et la forge. Il réalise principalement des installations en forge, où la matière brute occupe une place centrale. Son travail se distingue par une maîtrise technique en alternant entre des œuvres délicates, qui contrastent par leur finesse avec la rudesse du métal, et des installations plus monumentales, intégrant divers matériaux. Ce jeu de contrastes donne à ses créations une tension particulière : la force et l’aspect brut de la forge dialoguent avec des pièces plus fragiles et précises, révélant une réflexion approfondie sur la présence et l’impact de chaque élément dans l’espace.",
     "Sa réflexion s’appuie sur la science-fiction et la pensée décoloniale. Il s’inspire plastiquement d’artistes tels que Joseph Cornell, Daido Moriyama ou Thomas Struth. Les écrits d’Isaac Asimov, Mark Fisher, Edward Said, Fatima Ouassak ou encore Cheikh Anta Diop, ainsi que la poésie de Léon-Gontran Damas et de Rûmî, nourrissent sa réflexion. Chahid El Batti interroge les questions d’émancipation, d’alternatives anti-capitalistes et décoloniales, et propose à travers ses œuvres des espaces de réflexion et d’expérimentation autour de l’imaginaire, de l’autosuffisance et de l’entraide."
   ],
+  "bio_en": [
+    "Chahid El Batti (born in 2000 in Maisons-Laffitte) lives and works in Paris, in Julien Sirjacq's studio. After starting out in the sciences, with a two-year technical degree (DUT) in thermal and energy engineering followed by a year at engineering school, he turned to art at the Beaux-Arts de Paris. Alongside this, he runs an independent music practice with the group Délusions Records, as a producer and screen printer.",
+    "He is interested in where techniques, rhythms and images meet. His approach is multidisciplinary: he works from fragments, explores different mediums and experiments with the interplay between images and materials, producing raw and sensitive forms. Chahid El Batti treats impermanence and contradiction as driving forces in his practice. He draws on Muslim spirituality, virtual worlds and his scientific training to devise experimental protocols.",
+    "His mediums include collage, photography, found objects and forging. He mainly makes forged installations, in which raw material plays a central role. His work stands out for its technical mastery, moving between delicate pieces, whose finesse contrasts with the roughness of metal, and more monumental installations that combine various materials. This play of contrasts gives his work a particular tension: the strength and rawness of the forge are in dialogue with more fragile, precise pieces, revealing careful thought about the presence and impact of each element in space.",
+    "His thinking draws on science fiction and decolonial thought. Visually, he is inspired by artists such as Joseph Cornell, Daido Moriyama and Thomas Struth. The writings of Isaac Asimov, Mark Fisher, Edward Said, Fatima Ouassak and Cheikh Anta Diop, along with the poetry of Léon-Gontran Damas and Rumi, feed his reflection. Chahid El Batti questions emancipation and anti-capitalist and decolonial alternatives, and through his works opens spaces for reflection and experimentation around imagination, self-sufficiency and mutual aid."
+  ],
   "social": [
-    { "name": "0kupeagr1nd924", "url": "https://www.instagram.com/0kupeagr1nd924/" },
-    { "name": "Delusion.cc", "url": "https://delusion.cc/" }
+    {
+      "name": "0kupeagr1nd924",
+      "url": "https://www.instagram.com/0kupeagr1nd924/"
+    },
+    {
+      "name": "Delusion.cc",
+      "url": "https://delusion.cc/"
+    }
   ]
 }

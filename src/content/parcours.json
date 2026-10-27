@@ -2,51 +2,68 @@
   "sections": [
     {
       "title": "Expositions individuelles",
+      "title_en": "Solo exhibitions",
       "items": [
         {
           "year": 2025,
           "title": "« Space echoes like an immense tomb, yet the stars still burn. Why does the sun take so long to die ? »",
-          "detail": "Diplôme de 3e année — Beaux-Arts de Paris, France"
+          "title_en": "",
+          "detail": "Diplôme de 3e année — Beaux-Arts de Paris, France",
+          "detail_en": "3rd-year diploma — Beaux-Arts de Paris, France"
         },
         {
           "year": 2023,
           "title": "« Faire/niyya/Fer »",
-          "detail": "mat3amclub — Paris, France"
+          "title_en": "",
+          "detail": "mat3amclub — Paris, France",
+          "detail_en": ""
         }
       ]
     },
     {
       "title": "Expositions collectives",
+      "title_en": "Group exhibitions",
       "items": [
         {
           "year": 2025,
           "title": "« www.www.www »",
-          "detail": "Atelier Sirjacq — Beaux-Arts de Paris, France"
+          "title_en": "",
+          "detail": "Atelier Sirjacq — Beaux-Arts de Paris, France",
+          "detail_en": ""
         },
         {
           "year": 2024,
           "title": "« Dans mon peignoir, j’attends la fin du monde »",
-          "detail": "mat3amclub — La Corvée — Paris, France"
+          "title_en": "",
+          "detail": "mat3amclub — La Corvée — Paris, France",
+          "detail_en": ""
         },
         {
           "year": 2023,
           "title": "« Carte Blanche »",
-          "detail": "Institut Géographique National — Le DOC — Paris, France"
+          "title_en": "",
+          "detail": "Institut Géographique National — Le DOC — Paris, France",
+          "detail_en": ""
         },
         {
           "year": 2023,
           "title": "« Première Encre »",
-          "detail": "La Fab — Paris, France"
+          "title_en": "",
+          "detail": "La Fab — Paris, France",
+          "detail_en": ""
         }
       ]
     },
     {
       "title": "Ateliers",
+      "title_en": "Workshops",
       "items": [
         {
           "year": 2025,
           "title": "« Rêves et étoiles »",
-          "detail": "mat3amclub — La Corvée — Paris, France"
+          "title_en": "« Dream and Stars »",
+          "detail": "mat3amclub — La Corvée — Paris, France",
+          "detail_en": ""
         }
       ]
     }

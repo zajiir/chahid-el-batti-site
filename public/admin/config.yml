@@ -25,6 +25,7 @@ collections:
         fields:
           - { label: "Nom affiché", name: "name", widget: "string" }
           - { label: "Sous-titre", name: "subtitle", widget: "string" }
+          - { label: "Sous-titre (anglais — vide = texte français)", name: "subtitle_en", widget: "string", required: false }
 
       - file: "src/content/music.json"
         label: "02 — Music"
@@ -71,6 +72,7 @@ collections:
                 required: false
                 hint: "Lien YouTube ou Vimeo (ou fichier .mp4). Laisse vide : un emplacement « Vidéo — bientôt » s'affiche."
               - { label: "Titre affiché", name: "title", widget: "string", required: false }
+              - { label: "Titre affiché (anglais — vide = texte français)", name: "title_en", widget: "string", required: false }
           - label: "Plateformes"
             name: "platforms"
             widget: "list"
@@ -78,6 +80,7 @@ collections:
             fields:
               - { label: "Nom (ex. Spotify)", name: "name", widget: "string" }
               - { label: "Texte affiché (ex. Profil artiste)", name: "handle", widget: "string" }
+              - { label: "Texte affiché (anglais — vide = texte français)", name: "handle_en", widget: "string", required: false }
               - { label: "URL", name: "url", widget: "string" }
 
       - file: "src/content/arena.json"
@@ -101,13 +104,37 @@ collections:
                 widget: "string"
                 required: false
                 hint: "Laisse vide pour reprendre la description du channel sur Are.na."
+              - { label: "Note (anglais — vide = texte français)", name: "note_en", widget: "string", required: false }
 
       - file: "src/content/friends.json"
         label: "04 — Friends"
         name: "friends"
         fields:
           - { label: "Titre", name: "heading", widget: "string" }
-          - { label: "Message", name: "message", widget: "string" }
+          - { label: "Introduction", name: "intro", widget: "text", required: false }
+          - { label: "Introduction (anglais — vide = texte français)", name: "intro_en", widget: "text", required: false }
+          - label: "Message d'attente"
+            name: "message"
+            widget: "string"
+            hint: "Affiché tant que la liste ci-dessous est vide."
+          - { label: "Message d'attente (anglais — vide = texte français)", name: "message_en", widget: "string", required: false }
+          - label: "Amis / collaborations"
+            name: "friends"
+            widget: "list"
+            summary: "{{fields.name}}"
+            required: false
+            fields:
+              - { label: "Nom", name: "name", widget: "string" }
+              - { label: "Rôle / discipline", name: "role", widget: "string", required: false }
+              - { label: "Rôle / discipline (anglais — vide = texte français)", name: "role_en", widget: "string", required: false }
+              - label: "Portrait"
+                name: "image"
+                widget: "image"
+                required: false
+                media_folder: "/public/friends"
+                public_folder: "/friends"
+                hint: "Format portrait de préférence. Sans photo, ses initiales s'affichent sur fond bleu."
+              - { label: "Lien (Instagram, site…)", name: "url", widget: "string", required: false }
 
       - file: "src/content/parcours.json"
         label: "05 — Parcours"
@@ -119,6 +146,7 @@ collections:
             summary: "{{fields.title}}"
             fields:
               - { label: "Titre de la section", name: "title", widget: "string" }
+              - { label: "Titre de la section (anglais — vide = texte français)", name: "title_en", widget: "string", required: false }
               - label: "Éléments"
                 name: "items"
                 widget: "list"
@@ -126,7 +154,9 @@ collections:
                 fields:
                   - { label: "Année", name: "year", widget: "number", value_type: "int" }
                   - { label: "Titre", name: "title", widget: "string" }
+                  - { label: "Titre (anglais — vide = texte français)", name: "title_en", widget: "string", required: false }
                   - { label: "Détail (lieu, ville...)", name: "detail", widget: "string" }
+                  - { label: "Détail (anglais — vide = texte français)", name: "detail_en", widget: "string", required: false }
 
       - file: "src/content/about.json"
         label: "06 — About"
@@ -135,10 +165,16 @@ collections:
           - { label: "Email", name: "email", widget: "string" }
           - { label: "Téléphone", name: "phone", widget: "string" }
           - { label: "Localisation", name: "location", widget: "string" }
+          - { label: "Localisation (anglais — vide = texte français)", name: "location_en", widget: "string", required: false }
           - label: "Biographie (un paragraphe par bloc)"
             name: "bio"
             widget: "list"
             field: { label: "Paragraphe", name: "paragraph", widget: "text" }
+          - label: "Biographie (anglais — vide = texte français)"
+            name: "bio_en"
+            widget: "list"
+            required: false
+            field: { label: "Paragraph", name: "paragraph", widget: "text" }
           - label: "Réseaux / liens"
             name: "social"
             widget: "list"
@@ -168,7 +204,9 @@ collections:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
       - { label: "Titre", name: "title", widget: "string", required: false }
       - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
+      - { label: "Technique / matériaux (anglais — vide = texte français)", name: "medium_en", widget: "string", required: false }
       - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
+      - { label: "Dimensions / détails (anglais — vide = texte français)", name: "details_en", widget: "string", required: false }
       - { label: "Année", name: "year", widget: "string", required: false }
       - label: "Ordre"
         name: "ordre"
@@ -196,7 +234,9 @@ collections:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
       - { label: "Titre", name: "title", widget: "string", required: false }
       - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
+      - { label: "Technique / matériaux (anglais — vide = texte français)", name: "medium_en", widget: "string", required: false }
       - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
+      - { label: "Dimensions / détails (anglais — vide = texte français)", name: "details_en", widget: "string", required: false }
       - { label: "Année", name: "year", widget: "string", required: false }
       - label: "Ordre"
         name: "ordre"
@@ -224,7 +264,9 @@ collections:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
       - { label: "Titre", name: "title", widget: "string", required: false }
       - { label: "Technique / matériaux", name: "medium", widget: "string", required: false }
+      - { label: "Technique / matériaux (anglais — vide = texte français)", name: "medium_en", widget: "string", required: false }
       - { label: "Dimensions / détails", name: "details", widget: "string", required: false }
+      - { label: "Dimensions / détails (anglais — vide = texte français)", name: "details_en", widget: "string", required: false }
       - { label: "Année", name: "year", widget: "string", required: false }
       - label: "Ordre"
         name: "ordre"
@@ -244,3 +286,4 @@ collections:
           - label: "Texte du bandeau défilant (bas de chaque page)"
             name: "marquee"
             widget: "string"
+          - { label: "Texte du bandeau (anglais — vide = texte français)", name: "marquee_en", widget: "string", required: false }

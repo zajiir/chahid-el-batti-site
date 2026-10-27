@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLang } from "../lib/i18n";
 
 const PLAYLIST_URL = "https://soundcloud.com/zajiir/sets/radio-horizon";
 const EMBED_SRC =
@@ -22,6 +23,7 @@ function readCollapsed() {
 // Monté une seule fois à la racine de l'app (au-dessus des routes) :
 // l'iframe ne se démonte jamais lors de la navigation, donc la lecture continue.
 export default function RadioPlayer() {
+  const { t } = useLang();
   const [open, setOpen] = useState(() => !readCollapsed());
   // Le lecteur SoundCloud (lourd) est chargé une fois la page affichée, et
   // seulement si la radio est ouverte — puis il reste monté.
@@ -51,7 +53,7 @@ export default function RadioPlayer() {
         className="radio__toggle"
         onClick={toggle}
         aria-expanded={open}
-        aria-label={open ? "Réduire la radio" : "Ouvrir la radio"}
+        aria-label={open ? t("radio.close") : t("radio.open")}
       >
         <span className="radio__toggle-dot" />
         RADIO HORIZON

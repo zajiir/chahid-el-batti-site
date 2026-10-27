@@ -334,6 +334,28 @@ h3 {
   opacity: 1;
 }
 
+.lightbox__share {
+  position: absolute;
+  top: 1.35rem;
+  right: 4.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: none;
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  font: inherit;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.088em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color var(--fast), background var(--fast);
+}
+
+.lightbox__share:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .lightbox__nav {
   position: absolute;
   top: 50%;
@@ -452,6 +474,48 @@ h3 {
   color: var(--blue);
 }
 
+.nav__left {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+/* Bascule FR / EN — sur téléphone, seule la langue proposée s'affiche */
+.nav__lang {
+  border: none;
+  background: transparent;
+  padding: 0.3rem 0;
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.088em;
+  color: var(--grey);
+  cursor: pointer;
+}
+
+.nav__lang .is-active {
+  color: var(--blue);
+}
+
+.nav__lang:hover {
+  color: var(--ink);
+}
+
+.nav__lang-sep {
+  margin: 0 0.3em;
+}
+
+@media (max-width: 600px) {
+  .nav__left {
+    gap: 0.6rem;
+  }
+
+  .nav__lang .is-active,
+  .nav__lang-sep {
+    display: none;
+  }
+}
+
 .nav__list {
   list-style: none;
   display: flex;
@@ -547,6 +611,22 @@ h3 {
   }
   .nav__logo {
     font-size: 0.72rem;
+  }
+}
+
+/* Petits téléphones : logo + FR/EN + 7 pictos doivent tenir sur une ligne */
+@media (max-width: 430px) {
+  .nav {
+    padding: 0 0.6rem;
+  }
+  .nav__list {
+    gap: 0;
+  }
+  .nav__item {
+    width: 2.15rem;
+  }
+  .nav__left {
+    gap: 0.5rem;
   }
 }
 
@@ -1561,6 +1641,83 @@ h3 {
   color: var(--grey);
 }
 
+.friends__intro {
+  max-width: 640px;
+  margin-bottom: 2.5rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.friends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+.friend {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.friend__photo {
+  aspect-ratio: 4 / 5;
+  margin-bottom: 0.9rem;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+}
+
+.friend__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.friend__photo span {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--paper);
+}
+
+a.friend:hover .friend__photo img {
+  transform: scale(1.04);
+}
+
+a.friend:hover .friend__name {
+  color: var(--blue);
+}
+
+.friend__name {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.022em;
+  transition: color var(--fast);
+}
+
+.friend__role {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  color: var(--grey);
+}
+
+.friend__cta {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.088em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+@media (max-width: 560px) {
+  .friends-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+  }
+}
+
 @media (max-width: 600px) {
   .page {
     padding: calc(var(--nav-h) + 1.5rem) 1rem 4rem;
@@ -1658,12 +1815,11 @@ h3 {
   opacity: 1;
 }
 
-.plane svg {
+.plane canvas {
   display: block;
   width: 100%;
   height: 100%;
-  fill: currentColor;
-  filter: drop-shadow(0 2px 2px rgba(11, 10, 20, 0.25));
+  filter: drop-shadow(0 3px 3px rgba(11, 10, 20, 0.22));
 }
 
 .love-pop {
