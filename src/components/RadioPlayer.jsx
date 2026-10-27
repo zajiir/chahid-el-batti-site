@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const PLAYLIST_URL = "https://soundcloud.com/delusionrecords/sets/deluradio";
+const PLAYLIST_URL = "https://soundcloud.com/zajiir/sets/radio-horizon";
 const EMBED_SRC =
   "https://w.soundcloud.com/player/?url=" +
   encodeURIComponent(PLAYLIST_URL) +
@@ -54,7 +54,7 @@ export default function RadioPlayer() {
         aria-label={open ? "Réduire la radio" : "Ouvrir la radio"}
       >
         <span className="radio__toggle-dot" />
-        DÉLUSION RADIO
+        RADIO HORIZON
         <svg className="radio__chevron" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 9l7 7 7-7" />
         </svg>
@@ -62,7 +62,7 @@ export default function RadioPlayer() {
       <div className="radio__body">
         {load && (
           <iframe
-            title="Délusion Radio — SoundCloud"
+            title="Radio Horizon — SoundCloud"
             width="100%"
             height="166"
             scrolling="no"
