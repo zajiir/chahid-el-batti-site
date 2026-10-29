@@ -15,19 +15,25 @@ const STRINGS = {
     "nav.logo": "Accueil — Chahîd EL BATTI",
     "lang.switch": "Read in English",
 
-    "splash.hint": "Glisser · Cliquer pour entrer",
+    "splash.hint": "Cliquer pour entrer",
     "splash.enter": "Entrer sur le site",
 
     "radio.open": "Ouvrir la radio",
     "radio.close": "Réduire la radio",
 
     "home.noImages": "Images non disponibles",
+    "notice.close": "Fermer la notification",
 
     "works.eyebrow": "01 / TRAVAUX",
     "works.title": "Travaux",
     "works.cat.photos": "Photos",
     "works.cat.sculptures": "Sculptures / Installations",
     "works.cat.graphiques": "Arts graphiques",
+    "works.index": "Index des œuvres",
+    "works.count": "{n} œuvres",
+    "works.views": "{n} vues",
+    "works.view1": "1 vue",
+    "works.untitled": "Sans titre",
     "strip.label": "Galerie — faire défiler horizontalement, cliquer une image pour l'agrandir",
     "strip.prev": "Images précédentes",
     "strip.next": "Images suivantes",
@@ -58,6 +64,8 @@ const STRINGS = {
     "arena.link": "Lien ↗",
 
     "friends.visit": "Voir ↗",
+    "friends.press": "Articles & presse",
+    "friends.read": "Lire l'article ↗",
 
     "cv.eyebrow": "05 / PARCOURS",
     "cv.title": "Parcours",
@@ -73,19 +81,25 @@ const STRINGS = {
     "nav.logo": "Home — Chahîd EL BATTI",
     "lang.switch": "Lire en français",
 
-    "splash.hint": "Drag · Click to enter",
+    "splash.hint": "Click to enter",
     "splash.enter": "Enter the site",
 
     "radio.open": "Open the radio",
     "radio.close": "Collapse the radio",
 
     "home.noImages": "Images unavailable",
+    "notice.close": "Close the notification",
 
     "works.eyebrow": "01 / WORKS",
     "works.title": "Works",
     "works.cat.photos": "Photos",
     "works.cat.sculptures": "Sculptures / Installations",
     "works.cat.graphiques": "Graphic arts",
+    "works.index": "Index of works",
+    "works.count": "{n} works",
+    "works.views": "{n} views",
+    "works.view1": "1 view",
+    "works.untitled": "Untitled",
     "strip.label": "Gallery — scroll horizontally, click an image to enlarge it",
     "strip.prev": "Previous images",
     "strip.next": "Next images",
@@ -116,6 +130,8 @@ const STRINGS = {
     "arena.link": "Link ↗",
 
     "friends.visit": "Visit ↗",
+    "friends.press": "Press",
+    "friends.read": "Read the article ↗",
 
     "cv.eyebrow": "05 / CV",
     "cv.title": "CV",

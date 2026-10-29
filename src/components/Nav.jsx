@@ -1,16 +1,19 @@
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  PictoAccueil,
   PictoAreNa,
   PictoMusic,
   PictoAbout,
   PictoTravaux,
   PictoParcours,
 } from "./icons/PictoIcons";
+import SphereLogo from "./SphereLogo";
 import { useLang } from "../lib/i18n";
 
+const MOBILE = "(max-width: 700px)";
+
 const ITEMS = [
-  { to: "/", label: "nav.home", Icon: PictoAccueil },
+  { to: "/", label: "nav.home", sphere: true },
   { to: "/travaux", label: "nav.works", Icon: PictoTravaux },
   { to: "/music", label: "nav.music", Icon: PictoMusic },
   { to: "/arena", label: "nav.arena", Icon: PictoAreNa },
@@ -19,8 +22,23 @@ const ITEMS = [
   { to: "/about", label: "nav.about", Icon: PictoAbout },
 ];
 
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(() => window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [query]);
+  return matches;
+}
+
+// Barre du haut sur ordinateur ; sur téléphone, les onglets passent dans une
+// barre fixée en bas de l'écran (à portée de pouce), le logo reste en haut.
 export default function Nav() {
   const { lang, setLang, t } = useLang();
+  const mobile = useMediaQuery(MOBILE);
+  const homeSpeed = useRef(1);
 
   return (
     <nav className="nav">
@@ -35,7 +53,6 @@ export default function Nav() {
           title={t("lang.switch")}
         >
           <span className={lang === "fr" ? "is-active" : ""}>FR</span>
-          <span className="nav__lang-sep">/</span>
           <span className={lang === "en" ? "is-active" : ""}>EN</span>
         </button>
       </div>
@@ -50,8 +67,21 @@ export default function Nav() {
               }
               aria-label={t(item.label)}
               title={t(item.label)}
+              {...(item.sphere && {
+                onPointerEnter: () => (homeSpeed.current = 3),
+                onPointerLeave: () => (homeSpeed.current = 1),
+              })}
             >
-              {item.Icon ? (
+              {item.sphere ? (
+                <SphereLogo
+                  key={mobile ? "m" : "d"}
+                  size={mobile ? 34 : 40}
+                  subdiv={2}
+                  fps={30}
+                  speedRef={homeSpeed}
+                  className="nav__sphere"
+                />
+              ) : item.Icon ? (
                 <item.Icon aria-hidden="true" />
               ) : (
                 <span className="nav__glyph" aria-hidden="true">

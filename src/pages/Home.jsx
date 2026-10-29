@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchContents, blockImage, blockText } from "../lib/arena";
 import Plane from "../components/Plane";
+import HomeNotice from "../components/HomeNotice";
 import { useLang } from "../lib/i18n";
 import home from "../content/home.json";
 
@@ -86,7 +87,8 @@ export default function Home() {
         <p className="eyebrow">{tr(home, "subtitle")}</p>
       </div>
       <div className="hero__hint">↓</div>
-      <Plane anchorRef={nameRef} mode="roam" zBehind={0} zFront={2} />
+      <Plane anchorRef={nameRef} mode="roam" size={36} zBehind={0} zFront={2} />
+      <HomeNotice />
     </div>
   );
 }

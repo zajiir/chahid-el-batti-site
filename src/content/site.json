@@ -1,4 +1,14 @@
 {
-  "marquee": "Radio Horizon Out Now !",
-  "marquee_en": "Radio Horizon Out Now!"
+  "notice": {
+    "show": true,
+    "kicker": "Nouveau",
+    "kicker_en": "New",
+    "title": "Radio Horizon",
+    "text": "Out now !",
+    "text_en": "Out now!",
+    "cta": "Écouter",
+    "cta_en": "Listen",
+    "link": "/music",
+    "image": "/music/radio-horizon.webp"
+  }
 }

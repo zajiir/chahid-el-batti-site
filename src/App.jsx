@@ -2,10 +2,8 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import Nav from "./components/Nav";
 import RadioPlayer from "./components/RadioPlayer";
-import Marquee from "./components/Marquee";
 import { applyDayNightAttribute } from "./lib/dayNight";
-import { LangProvider, useLang } from "./lib/i18n";
-import site from "./content/site.json";
+import { LangProvider } from "./lib/i18n";
 import Home from "./pages/Home";
 import Travaux from "./pages/Travaux";
 import Music from "./pages/Music";
@@ -21,12 +19,11 @@ const Splash = lazy(() => import("./pages/Splash"));
 
 const SPLASH_KEY = "splash-seen";
 
-// Nav + RadioPlayer + Marquee (footer) sont montés une seule fois ici, au-dessus
-// des routes : ils ne se démontent jamais lors de la navigation (SPA), donc la
-// radio continue de jouer et le footer reste identique d'une page à l'autre.
+// Nav + RadioPlayer sont montés une seule fois ici, au-dessus des routes : ils
+// ne se démontent jamais lors de la navigation (SPA), donc la radio continue
+// de jouer d'une page à l'autre.
 function AppShell() {
   const location = useLocation();
-  const { tr } = useLang();
   const [splashSeen, setSplashSeen] = useState(
     () => sessionStorage.getItem(SPLASH_KEY) === "1"
   );
@@ -80,7 +77,6 @@ function AppShell() {
         <Route path="/friends" element={<Friends />} />
       </Routes>
       <RadioPlayer />
-      <Marquee text={tr(site, "marquee")} />
     </>
   );
 }

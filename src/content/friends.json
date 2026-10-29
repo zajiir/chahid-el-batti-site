@@ -4,5 +4,27 @@
   "intro_en": "",
   "message": "Bientôt disponible.",
   "message_en": "Coming soon.",
-  "friends": []
+  "friends": [],
+  "articles": [
+    {
+      "title": "Le Chat a Mangé sa Langue — لسانه القط أكل",
+      "source": "mat3amclub",
+      "date": "Sept. – déc. 2025",
+      "date_en": "Sept – Dec 2025",
+      "excerpt": "Programmation du mat3amclub autour des formes alternatives du langage, au prisme de l’oralité : broderie, poésie, performance et musique.",
+      "excerpt_en": "A mat3amclub programme exploring alternative forms of language through orality: embroidery, poetry, performance and music.",
+      "image": "/friends/press/le-chat-a-mange-sa-langue.webp",
+      "url": "https://mat3amclub.com/curation/le-chat-a-mange-sa-langue/"
+    },
+    {
+      "title": "FAIRE / NIYYA / FER — Chahid El Batti",
+      "source": "mat3amclub",
+      "date": "7 octobre 2023",
+      "date_en": "7 October 2023",
+      "excerpt": "Premier solo show de Chahid El Batti, curaté par Jade Saber et présenté lors de la soirée de lancement du mat3amclub.",
+      "excerpt_en": "Chahid El Batti’s first solo show, curated by Jade Saber and presented at the launch night of mat3amclub.",
+      "image": "/friends/press/faire-niyya-fer.webp",
+      "url": "https://mat3amclub.com/events/faire-niyya-fer/"
+    }
+  ]
 }

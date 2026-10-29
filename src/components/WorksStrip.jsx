@@ -3,13 +3,47 @@ import { useLang } from "../lib/i18n";
 
 const DRAG_THRESHOLD = 6; // px — au-delà, un appui souris est un glissé, pas un clic
 const EASE = 0.2; // part de la distance restante parcourue à chaque frame
+const ARROW_DURATION = 420; // ms
+
+// Défilement animé maison pour les flèches : scrollTo({ behavior: "smooth" })
+// est ignoré par certains navigateurs / réglages, et les flèches ne faisaient
+// alors rien. Si aucune image n'est dessinée (onglet en arrière-plan…), on
+// arrive quand même à destination.
+function animateScroll(el, to) {
+  const from = el.scrollLeft;
+  const start = performance.now();
+  let done = false;
+  function step(now) {
+    if (done) return;
+    const k = Math.min(1, (now - start) / ARROW_DURATION);
+    el.scrollLeft = from + (to - from) * (1 - Math.pow(1 - k, 3));
+    if (k < 1) requestAnimationFrame(step);
+    else done = true;
+  }
+  requestAnimationFrame(step);
+  setTimeout(() => {
+    if (done) return;
+    done = true;
+    el.scrollLeft = to;
+  }, ARROW_DURATION + 150);
+}
 
 // Bande horizontale en défilement natif : swipe trackpad / tactile gérés par
-// le navigateur, molette verticale convertie en défilement horizontal lissé,
-// glisser à la souris, flèches et clavier. Un clic ouvre le plein écran.
+// le navigateur, glisser à la souris, flèches et clavier. Un clic ouvre le
+// plein écran.
 // focusIndex : image affichée en plein écran — la bande la garde centrée
 // derrière, pour la retrouver à la fermeture (ou en arrivant par son lien).
-export default function WorksStrip({ works, onOpen, focusIndex = null }) {
+// wheel : convertit aussi la molette verticale en défilement horizontal (à
+// éviter quand la page elle-même défile verticalement d'une bande à l'autre).
+// tags : affiche le titre sur chaque image.
+export default function WorksStrip({
+  works,
+  onOpen,
+  focusIndex = null,
+  wheel = false,
+  tags = true,
+  eagerCount = 3,
+}) {
   const { t, tr } = useLang();
   const scrollerRef = useRef(null);
   const suppressClickRef = useRef(0);
@@ -151,7 +185,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
       drag = null;
     }
 
-    el.addEventListener("wheel", onWheel, { passive: false });
+    if (wheel) el.addEventListener("wheel", onWheel, { passive: false });
     el.addEventListener("pointerdown", onPointerDown);
     return () => {
       stopGlide();
@@ -160,7 +194,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerUp);
     };
-  }, []);
+  }, [wheel]);
 
   // Flèches : amène l'image suivante / précédente au bord gauche.
   function go(dir) {
@@ -169,11 +203,12 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
     const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0;
     const items = Array.from(el.children);
     const lefts = items.map((it) => it.offsetLeft - pad);
+    const max = el.scrollWidth - el.clientWidth;
     const target =
       dir > 0
         ? lefts.find((l) => l > el.scrollLeft + 4)
         : [...lefts].reverse().find((l) => l < el.scrollLeft - 4);
-    el.scrollTo({ left: target ?? (dir > 0 ? el.scrollWidth : 0), behavior: "smooth" });
+    animateScroll(el, Math.max(0, Math.min(max, target ?? (dir > 0 ? max : 0))));
   }
 
   function onKeyDown(e) {
@@ -207,7 +242,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
               width={w.width}
               height={w.height}
               alt={(w.caption && tr(w.caption, "title")) || ""}
-              loading={i < 3 ? "eager" : "lazy"}
+              loading={i < eagerCount ? "eager" : "lazy"}
               decoding="async"
               draggable={false}
               onError={(e) => {
@@ -216,7 +251,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
                 e.currentTarget.src = w.original;
               }}
             />
-            {w.caption && <span className="strip__tag">{tr(w.caption, "title")}</span>}
+            {tags && w.caption && <span className="strip__tag">{tr(w.caption, "title")}</span>}
           </button>
         ))}
       </div>
@@ -238,7 +273,7 @@ export default function WorksStrip({ works, onOpen, focusIndex = null }) {
         →
       </button>
 
-      {works.length > 0 && (
+      {works.length > 1 && (
         <div className="strip__count" aria-live="polite">
           {current + 1} / {works.length}
         </div>

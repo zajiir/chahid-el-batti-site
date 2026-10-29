@@ -116,7 +116,7 @@ collections:
           - label: "Message d'attente"
             name: "message"
             widget: "string"
-            hint: "Affiché tant que la liste ci-dessous est vide."
+            hint: "Affiché tant que les listes ci-dessous (amis, articles) sont vides."
           - { label: "Message d'attente (anglais — vide = texte français)", name: "message_en", widget: "string", required: false }
           - label: "Amis / collaborations"
             name: "friends"
@@ -135,6 +135,25 @@ collections:
                 public_folder: "/friends"
                 hint: "Format portrait de préférence. Sans photo, ses initiales s'affichent sur fond bleu."
               - { label: "Lien (Instagram, site…)", name: "url", widget: "string", required: false }
+          - label: "Articles & presse"
+            name: "articles"
+            widget: "list"
+            summary: "{{fields.title}}"
+            required: false
+            fields:
+              - { label: "Titre de l'article", name: "title", widget: "string" }
+              - { label: "Média / site (ex. mat3amclub)", name: "source", widget: "string", required: false }
+              - { label: "Date (texte libre)", name: "date", widget: "string", required: false }
+              - { label: "Date (anglais — vide = texte français)", name: "date_en", widget: "string", required: false }
+              - { label: "Résumé (une ou deux phrases)", name: "excerpt", widget: "text", required: false }
+              - { label: "Résumé (anglais — vide = texte français)", name: "excerpt_en", widget: "text", required: false }
+              - label: "Image"
+                name: "image"
+                widget: "image"
+                required: false
+                media_folder: "/public/friends/press"
+                public_folder: "/friends/press"
+              - { label: "Lien de l'article", name: "url", widget: "string" }
 
       - file: "src/content/parcours.json"
         label: "05 — Parcours"
@@ -201,7 +220,11 @@ collections:
     sortable_fields: ["ordre", "title"]
     fields:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
-      - { label: "Titre", name: "title", widget: "string", required: false }
+      - label: "Titre"
+        name: "title"
+        widget: "string"
+        required: false
+        hint: "Les images qui portent exactement le même titre forment une seule œuvre sur le site (sa fiche + toutes ses vues)."
       - label: "Titre (anglais)"
         name: "title_en"
         widget: "string"
@@ -236,7 +259,11 @@ collections:
     sortable_fields: ["ordre", "title"]
     fields:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
-      - { label: "Titre", name: "title", widget: "string", required: false }
+      - label: "Titre"
+        name: "title"
+        widget: "string"
+        required: false
+        hint: "Les images qui portent exactement le même titre forment une seule œuvre sur le site (sa fiche + toutes ses vues)."
       - label: "Titre (anglais)"
         name: "title_en"
         widget: "string"
@@ -271,7 +298,11 @@ collections:
     sortable_fields: ["ordre", "title"]
     fields:
       - { label: "Image", name: "image", widget: "image", choose_url: false }
-      - { label: "Titre", name: "title", widget: "string", required: false }
+      - label: "Titre"
+        name: "title"
+        widget: "string"
+        required: false
+        hint: "Les images qui portent exactement le même titre forment une seule œuvre sur le site (sa fiche + toutes ses vues)."
       - label: "Titre (anglais)"
         name: "title_en"
         widget: "string"
@@ -294,10 +325,31 @@ collections:
     description: "Éléments communs à toutes les pages."
     files:
       - file: "src/content/site.json"
-        label: "Bandeau défilant"
+        label: "Notification d'accueil"
         name: "site"
         fields:
-          - label: "Texte du bandeau défilant (bas de chaque page)"
-            name: "marquee"
-            widget: "string"
-          - { label: "Texte du bandeau (anglais — vide = texte français)", name: "marquee_en", widget: "string", required: false }
+          - label: "Notification"
+            name: "notice"
+            widget: "object"
+            collapsed: false
+            hint: "Petite carte qui apparaît à gauche de l'accueil (en haut sur téléphone). Le visiteur peut la fermer."
+            fields:
+              - { label: "Afficher la notification", name: "show", widget: "boolean", default: true }
+              - { label: "Petit titre (ex. Nouveau)", name: "kicker", widget: "string", required: false }
+              - { label: "Petit titre (anglais — vide = texte français)", name: "kicker_en", widget: "string", required: false }
+              - { label: "Titre", name: "title", widget: "string" }
+              - { label: "Texte", name: "text", widget: "string", required: false }
+              - { label: "Texte (anglais — vide = texte français)", name: "text_en", widget: "string", required: false }
+              - { label: "Texte du bouton", name: "cta", widget: "string", required: false }
+              - { label: "Texte du bouton (anglais — vide = texte français)", name: "cta_en", widget: "string", required: false }
+              - label: "Lien du bouton"
+                name: "link"
+                widget: "string"
+                required: false
+                hint: "Une page du site (ex. /music) ou une adresse complète (https://…)."
+              - label: "Image"
+                name: "image"
+                widget: "image"
+                required: false
+                media_folder: "/public/uploads"
+                public_folder: "/uploads"

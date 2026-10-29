@@ -13,8 +13,9 @@ const dimsModule = import.meta.glob("../generated/travaux-dims.json", {
 });
 const DIMS = Object.values(dimsModule)[0] || {};
 
-// Libellés traduits dans src/lib/i18n.jsx ("works.cat.<id>").
-export const CATEGORIES = ["photos", "sculptures", "graphiques"];
+// Libellés traduits dans src/lib/i18n.jsx ("works.cat.<id>"). Dans l'ordre
+// d'affichage : la pratique principale (forge, installations) d'abord.
+export const CATEGORIES = ["sculptures", "graphiques", "photos"];
 
 // "/travaux/sculptures/3.jpg" -> "/travaux/_thumbs/sculptures/3.webp"
 function variant(image, kind) {
@@ -51,6 +52,7 @@ for (const [path, e] of Object.entries(entries)) {
     width,
     height,
     caption: caption(e),
+    entry: e,
     order: Number.isFinite(e.ordre) ? e.ordre : Infinity,
   });
 }
@@ -58,6 +60,51 @@ for (const list of Object.values(byCategory)) {
   list.sort((a, b) => a.order - b.order || a.key.localeCompare(b.key));
 }
 
-export function getWorks(categoryId) {
-  return byCategory[categoryId] || [];
+// "Ça C'eST mAaa FUSÉE..." -> "ca-c-est-maaa-fusee"
+function slugify(text) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+// Les images d'une catégorie regroupées par œuvre (même titre) : une œuvre =
+// son titre, sa fiche (année, technique, dimensions) et toutes ses vues.
+// Les images sans titre restent chacune une œuvre à part ("Sans titre").
+// Ordre des œuvres = plus petit "ordre" parmi leurs images.
+const objectsByCategory = {};
+for (const [cat, images] of Object.entries(byCategory)) {
+  const groups = new Map();
+  for (const img of images) {
+    const title = (img.entry.title || "").trim();
+    const key = title || `untitled:${img.slug}`;
+    if (!groups.has(key)) groups.set(key, { title, images: [] });
+    groups.get(key).images.push(img);
+  }
+  const used = new Set();
+  objectsByCategory[cat] = [...groups.values()].map(({ title, images: imgs }) => {
+    // Fiche de l'œuvre : premier champ renseigné parmi ses images.
+    const field = (name) => imgs.map((i) => (i.entry[name] || "").trim()).find(Boolean) || "";
+    let id = slugify(title) || imgs[0].slug;
+    while (used.has(id)) id += "-2";
+    used.add(id);
+    return {
+      id,
+      title,
+      title_en: field("title_en"),
+      year: field("year"),
+      medium: field("medium"),
+      medium_en: field("medium_en"),
+      details: field("details"),
+      details_en: field("details_en"),
+      images: imgs,
+      order: imgs[0].order,
+    };
+  });
+}
+
+export function getObjects(categoryId) {
+  return objectsByCategory[categoryId] || [];
 }
