@@ -692,53 +692,71 @@ h3 {
 }
 
 /* ===== Radio persistante ===== */
+/* Même famille que la notification d'accueil : carte arrondie, pochette,
+   petit titre bleu, touche pour replier. */
 
 .radio {
   position: fixed;
-  bottom: calc(var(--footer-h) + 1rem);
-  right: 1rem;
-  width: 320px;
-  max-width: calc(100vw - 2rem);
+  bottom: calc(var(--footer-h) + 1.5rem);
+  right: var(--gutter);
+  width: 340px;
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: 0.65rem;
   background: var(--paper);
   border: 1px solid var(--line);
+  border-radius: 16px;
   z-index: 300;
-  box-shadow: 0 10px 30px rgba(11, 10, 20, 0.1);
+  box-shadow: 0 3px 0 var(--line), 0 18px 44px rgba(11, 10, 20, 0.16);
 }
 
 .radio__toggle {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
+  padding: 0.1rem;
   border: none;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 0.55rem 0.8rem;
-  font-size: 0.66rem;
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
   cursor: pointer;
 }
 
-.radio__chevron {
-  width: 1.6rem;
-  height: 1.6rem;
-  margin: -0.3rem -0.3rem -0.3rem auto;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  transition: transform var(--fast);
+.radio__cover {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  object-fit: cover;
 }
 
-.radio--collapsed .radio__chevron {
-  transform: rotate(180deg);
+.radio__label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
 }
 
-.radio__toggle:hover .radio__chevron {
+.radio__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.154em;
+  text-transform: uppercase;
   color: var(--blue);
+}
+
+.radio__title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .radio__toggle-dot {
@@ -760,21 +778,74 @@ h3 {
   }
 }
 
+/* La touche qui replie / déplie (même style que la croix de la notification) */
+.radio__key {
+  margin-left: auto;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--paper);
+  color: var(--grey);
+  box-shadow: 0 2px 0 var(--line);
+  transition: color var(--fast), transform var(--fast), box-shadow var(--fast);
+}
+
+.radio__toggle:hover .radio__key {
+  color: var(--blue);
+}
+
+.radio__toggle:active .radio__key {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.radio__chevron {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--fast);
+}
+
+.radio--collapsed .radio__chevron {
+  transform: rotate(180deg);
+}
+
 .radio__body {
   height: 166px;
+  margin-top: 0.65rem;
+  border-radius: 10px;
   overflow: hidden;
-  transition: height var(--fast), opacity var(--fast);
+  transition: height var(--fast), opacity var(--fast), margin var(--fast);
 }
 
 .radio--collapsed .radio__body {
   height: 0;
+  margin-top: 0;
   opacity: 0;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
   .radio {
-    right: 0.6rem;
-    width: calc(100vw - 1.2rem);
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: calc(var(--footer-h) + 0.75rem);
+    width: auto;
+    max-width: none;
+    padding: 0.55rem;
+  }
+
+  .radio__cover {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
   }
 }
 

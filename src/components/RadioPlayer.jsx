@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLang } from "../lib/i18n";
+import music from "../content/music.json";
 
 const PLAYLIST_URL = "https://soundcloud.com/zajiir/sets/radio-horizon";
 const EMBED_SRC =
@@ -49,17 +50,26 @@ export default function RadioPlayer() {
 
   return (
     <div className={"radio" + (open ? "" : " radio--collapsed")}>
+      {/* Même carte que la notification d'accueil : pochette, petit titre, touche */}
       <button
         className="radio__toggle"
         onClick={toggle}
         aria-expanded={open}
         aria-label={open ? t("radio.close") : t("radio.open")}
       >
-        <span className="radio__toggle-dot" />
-        RADIO HORIZON
-        <svg className="radio__chevron" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M5 9l7 7 7-7" />
-        </svg>
+        {music.release?.cover && <img className="radio__cover" src={music.release.cover} alt="" />}
+        <span className="radio__label">
+          <span className="radio__kicker">
+            <span className="radio__toggle-dot" />
+            Radio
+          </span>
+          <strong className="radio__title">Radio Horizon</strong>
+        </span>
+        <span className="radio__key" aria-hidden="true">
+          <svg className="radio__chevron" viewBox="0 0 24 24">
+            <path d="M5 9l7 7 7-7" />
+          </svg>
+        </span>
       </button>
       <div className="radio__body">
         {load && (

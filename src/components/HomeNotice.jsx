@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import site from "../content/site.json";
 import { useLang } from "../lib/i18n";
 
-const CLOSED_KEY = "home-notice-closed";
-
 // Petite notification à gauche de l'accueil (contenu éditable dans le CMS :
-// Réglages globaux → Notification d'accueil). Une fois fermée, elle ne
-// revient pas pendant la visite.
+// Réglages globaux → Notification d'accueil). Elle réapparaît à chaque
+// retour sur l'accueil ; la fermer ne vaut que pour ce passage.
 export default function HomeNotice() {
   const { t, tr } = useLang();
   const notice = site.notice;
@@ -15,11 +13,6 @@ export default function HomeNotice() {
 
   useEffect(() => {
     if (!notice?.show) return;
-    try {
-      if (sessionStorage.getItem(CLOSED_KEY) === "1") return;
-    } catch {
-      // stockage indisponible : on l'affiche
-    }
     const id = setTimeout(() => setVisible(true), 700);
     return () => clearTimeout(id);
   }, [notice]);
@@ -28,11 +21,6 @@ export default function HomeNotice() {
 
   function close() {
     setVisible(false);
-    try {
-      sessionStorage.setItem(CLOSED_KEY, "1");
-    } catch {
-      // rien à retenir
-    }
   }
 
   const cta = tr(notice, "cta");
