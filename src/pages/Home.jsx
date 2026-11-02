@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchContents, fetchFortnightBlocks, blockImage, blockText, shuffle } from "../lib/arena";
 import Plane from "../components/Plane";
-import HeroMarquee from "../components/HeroMarquee";
 import HomeNotice from "../components/HomeNotice";
 import { useLang } from "../lib/i18n";
 import home from "../content/home.json";
@@ -11,6 +10,8 @@ const MAX_IMAGES = 90;
 const MAX_WORDS = 14;
 const WORD_EVERY = 5; // un mot glissé toutes les 5 images
 const MAX_WORD_LENGTH = 90;
+const SECONDS_PER_ITEM = 2.9; // même vitesse de défilement qu'avec l'ancien bandeau
+const EAGER_ITEMS = 8; // les suivantes se chargent à l'approche
 
 // Images + courts textes ("mots") du channel, entremêlés.
 function buildItems(blocks) {
@@ -61,14 +62,38 @@ export default function Home() {
     };
   }, []);
 
+  // Deux copies à la suite : l'animation CSS fait défiler la première puis
+  // reprend au début sans à-coup (translateX(-50%)).
+  const loop = items.length ? [...items, ...items] : [];
+
   return (
     <div className="hero">
-      {status === "ok" && <HeroMarquee items={items} />}
-      {status === "error" && (
-        <div className="hero__marquee">
-          <div className="hero__fallback">{t("home.noImages")}</div>
-        </div>
-      )}
+      <div className="hero__marquee">
+        {status === "ok" && (
+          <div
+            className="hero__track"
+            style={{ animationDuration: `${Math.max(55, items.length * SECONDS_PER_ITEM)}s` }}
+          >
+            {loop.map((item, i) =>
+              item.type === "image" ? (
+                <img
+                  key={i}
+                  src={item.src}
+                  alt=""
+                  loading={i < EAGER_ITEMS ? "eager" : "lazy"}
+                  decoding="async"
+                  style={item.ratio ? { aspectRatio: item.ratio } : undefined}
+                />
+              ) : (
+                <div key={i} className="hero__word" aria-hidden={i >= items.length}>
+                  <span>{item.text}</span>
+                </div>
+              )
+            )}
+          </div>
+        )}
+        {status === "error" && <div className="hero__fallback">{t("home.noImages")}</div>}
+      </div>
       <div className="hero__content">
         <h1 ref={nameRef}>{home.name}</h1>
         <p className="eyebrow">{tr(home, "subtitle")}</p>

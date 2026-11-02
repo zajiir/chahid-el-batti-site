@@ -871,27 +871,29 @@ h3 {
   opacity: 0.75;
 }
 
-/* Positions et tailles posées par HeroMarquee (images recyclées en continu) */
 .hero__track {
-  position: absolute;
-  top: 50%;
-  left: 0;
+  display: flex;
+  gap: 1.25rem;
+  width: max-content;
+  /* durée posée par Home.jsx, proportionnelle au nombre de blocs */
+  animation: hero-scroll 55s linear infinite;
   will-change: transform;
 }
 
 .hero__track img {
-  position: absolute;
-  top: 0;
+  height: 78vh;
+  width: auto;
   object-fit: cover;
   flex-shrink: 0;
   filter: grayscale(0.15) contrast(1.02);
   background: var(--paper-off);
 }
 
-/* Les "mots" récents du channel Are.na, glissés entre les images */
+/* Les "mots" du channel Are.na, glissés entre les images */
 .hero__word {
-  position: absolute;
-  top: 0;
+  height: 78vh;
+  width: 44vh;
+  flex-shrink: 0;
   display: flex;
   align-items: flex-end;
   padding: 2rem 1.6rem;
@@ -905,6 +907,26 @@ h3 {
   line-height: 1.08;
   letter-spacing: -0.01em;
   overflow-wrap: anywhere;
+}
+
+@keyframes hero-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 600px) {
+  .hero__track img,
+  .hero__word {
+    height: 60vh;
+  }
+
+  .hero__word {
+    width: 34vh;
+  }
 }
 
 .hero__fallback {
