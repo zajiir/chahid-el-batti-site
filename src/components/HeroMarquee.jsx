@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const SPEED = 140; // px/s
+const SPEED_REDUCED = 45; // px/s — "animations réduites" : plus lent, mais le bandeau vit
 const GAP = 20; // px
 
 // Bandeau défilant de l'accueil. Avec 50 à 100 blocs, on ne crée pas 100
@@ -24,6 +25,7 @@ export default function HeroMarquee({ items }) {
     let h = 0;
     let wordW = 0;
     let raf = 0;
+    let sizedFor = null; // [largeur, hauteur] utilisées pour la mise en page
 
     const widthOf = (item) => (item.type === "image" ? h * (item.ratio || 0.75) : wordW);
 
@@ -50,41 +52,52 @@ export default function HeroMarquee({ items }) {
     }
 
     function layout() {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      if (!vw || !vh) return false; // fenêtre pas encore dimensionnée : on réessaiera
+      // Sur téléphone, la barre d'adresse qui apparaît / disparaît au défilement
+      // déclenche des "resize" : on les ignore (sinon le bandeau repartirait du
+      // début à chaque fois et semblerait figé).
+      if (sizedFor && sizedFor[0] === vw && Math.abs(sizedFor[1] - vh) < vh * 0.25) return true;
+      sizedFor = [vw, vh];
       const mobile = window.matchMedia("(max-width: 600px)").matches;
-      h = window.innerHeight * (mobile ? 0.6 : 0.78);
-      wordW = window.innerHeight * (mobile ? 0.34 : 0.44);
+      h = vh * (mobile ? 0.6 : 0.78);
+      wordW = vh * (mobile ? 0.34 : 0.44);
+      // Vraie nouvelle taille : on repart du bloc actuellement en tête.
+      next = slots.length ? slots[0].index : 0;
       slots = [];
-      next = 0;
       offset = 0;
       track.style.transform = "translate3d(0, 0, 0)";
       fill();
       setView({ slots: [...slots], h });
+      return true;
     }
 
-    layout();
-    window.addEventListener("resize", layout);
+    const onResize = () => layout();
+    window.addEventListener("resize", onResize);
 
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      let prev = performance.now();
-      const frame = (now) => {
-        raf = requestAnimationFrame(frame);
-        const dt = Math.min((now - prev) / 1000, 0.05);
-        prev = now;
-        offset -= SPEED * dt;
-        track.style.transform = `translate3d(${offset}px, 0, 0)`;
-        let changed = false;
-        while (slots.length && slots[0].x + slots[0].w + offset < 0) {
-          slots.shift(); // sortie à gauche : recyclée par fill() à droite
-          changed = true;
-        }
-        if (fill() || changed) setView({ slots: [...slots], h });
-      };
+    const speed = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? SPEED_REDUCED : SPEED;
+    let prev = performance.now();
+    const frame = (now) => {
       raf = requestAnimationFrame(frame);
-    }
+      if (!sizedFor && !layout()) return;
+      const dt = Math.max(0, Math.min((now - prev) / 1000, 0.05));
+      prev = now;
+      offset -= speed * dt;
+      track.style.transform = `translate3d(${offset}px, 0, 0)`;
+      let changed = false;
+      while (slots.length && slots[0].x + slots[0].w + offset < 0) {
+        slots.shift(); // sortie à gauche : recyclée par fill() à droite
+        changed = true;
+      }
+      if (fill() || changed) setView({ slots: [...slots], h });
+    };
+    layout();
+    raf = requestAnimationFrame(frame);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", layout);
+      window.removeEventListener("resize", onResize);
     };
   }, [items]);
 
