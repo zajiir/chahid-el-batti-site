@@ -71,7 +71,8 @@ function AppShell() {
 
   return (
     <>
-      <Sky />
+      {/* Accueil et Music recouvrent entièrement le ciel : calcul en pause */}
+      <Sky active={location.pathname !== "/" && location.pathname !== "/music"} />
       <Nav />
       {/* Changement de page : un voile de brume passe, la page en sort. */}
       <div className="fog-veil" key={`veil-${scrollKey}`} aria-hidden="true" />

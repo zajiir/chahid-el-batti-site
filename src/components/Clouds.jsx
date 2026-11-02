@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import CloudSky from "./CloudSky";
 
 // Forme de nuage commune (définie une seule fois dans la page, puis réutilisée
 // par <Cloud />) : des bulles floutées, blanches en haut, légèrement lavande en
@@ -42,8 +43,20 @@ export function Cloud({ className, style }) {
   );
 }
 
-// Nuages qui dérivent lentement derrière le contenu. Trois plans de
-// profondeur : ils glissent d'autant plus avec la souris qu'ils sont proches.
+// Ciel derrière le contenu : nuages "time-lapse" en WebGL (CloudSky) ; si le
+// navigateur ne le permet pas, nuages dessinés qui dérivent (SvgSky).
+// active : faux quand la page recouvre entièrement le ciel (calcul en pause).
+export function Sky({ active = true }) {
+  const [webgl, setWebgl] = useState(true);
+  return (
+    <div className="sky" aria-hidden="true">
+      {webgl ? <CloudSky active={active} onUnsupported={() => setWebgl(false)} /> : <SvgSky />}
+    </div>
+  );
+}
+
+// Nuages qui dérivent lentement. Trois plans de profondeur : ils glissent
+// d'autant plus avec la souris qu'ils sont proches.
 const SKY = [
   // [plan, top (vh), largeur (px), durée (s), décalage (0–1), miroir, opacité]
   [0, 8, 380, 170, 0.1, false, 0.75],
@@ -55,7 +68,7 @@ const SKY = [
 ];
 const DEPTHS = [6, 14, 26]; // px de parallaxe par plan
 
-export function Sky() {
+function SvgSky() {
   const layersRef = useRef([]);
 
   useEffect(() => {
@@ -87,7 +100,7 @@ export function Sky() {
   }, []);
 
   return (
-    <div className="sky" aria-hidden="true">
+    <>
       {DEPTHS.map((_, plane) => (
         <div key={plane} className="sky__layer" ref={(el) => (layersRef.current[plane] = el)}>
           {SKY.filter((c) => c[0] === plane).map(([, top, width, dur, phase, flip, opacity], i) => (
@@ -105,7 +118,7 @@ export function Sky() {
           ))}
         </div>
       ))}
-    </div>
+    </>
   );
 }
 
@@ -113,15 +126,22 @@ export function Sky() {
 // elle (plan avant, translucide) ; l'avion, qui alterne entre les deux, les
 // traverse.
 export function SplashClouds() {
+  const [webgl, setWebgl] = useState(true);
   return (
     <>
       <div className="splash-clouds splash-clouds--back" aria-hidden="true">
-        <div className="sky__drift" style={{ top: "18%", animationDuration: "48s", animationDelay: "-10s" }}>
-          <Cloud style={{ width: 420 }} />
-        </div>
-        <div className="sky__drift" style={{ top: "56%", animationDuration: "62s", animationDelay: "-40s" }}>
-          <Cloud style={{ width: 520, transform: "scaleX(-1)" }} />
-        </div>
+        {webgl ? (
+          <CloudSky onUnsupported={() => setWebgl(false)} />
+        ) : (
+          <>
+            <div className="sky__drift" style={{ top: "18%", animationDuration: "48s", animationDelay: "-10s" }}>
+              <Cloud style={{ width: 420 }} />
+            </div>
+            <div className="sky__drift" style={{ top: "56%", animationDuration: "62s", animationDelay: "-40s" }}>
+              <Cloud style={{ width: 520, transform: "scaleX(-1)" }} />
+            </div>
+          </>
+        )}
       </div>
       <div className="splash-clouds splash-clouds--front" aria-hidden="true">
         <div className="sky__drift" style={{ top: "38%", animationDuration: "36s", animationDelay: "-22s" }}>
