@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { fetchContents, blockImage, blockText } from "../lib/arena";
+import { fetchContents, fetchFortnightBlocks, blockImage, blockText, shuffle } from "../lib/arena";
 import Plane from "../components/Plane";
+import HeroMarquee from "../components/HeroMarquee";
 import HomeNotice from "../components/HomeNotice";
 import { useLang } from "../lib/i18n";
 import home from "../content/home.json";
 
 const CHANNEL = "going-through-life";
-const MAX_IMAGES = 14;
-const MAX_WORDS = 5;
-const WORD_EVERY = 3; // un mot glissé toutes les 3 images
+const MAX_IMAGES = 90;
+const MAX_WORDS = 14;
+const WORD_EVERY = 5; // un mot glissé toutes les 5 images
 const MAX_WORD_LENGTH = 90;
 
-// Derniers ajouts du channel : images + courts textes ("mots"), entremêlés.
+// Images + courts textes ("mots") du channel, entremêlés.
 function buildItems(blocks) {
   const images = [];
   const words = [];
@@ -43,8 +44,12 @@ export default function Home() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchContents(CHANNEL, { per: 48 })
-      .then(({ blocks }) => {
+    // 100 blocs tirés dans tout le channel, renouvelés toutes les deux
+    // semaines (même sélection pour tous) ; à défaut, les derniers ajouts.
+    fetchFortnightBlocks(CHANNEL, { slices: 2, per: 50 })
+      .then(({ blocks, rand }) => shuffle(blocks, rand))
+      .catch(() => fetchContents(CHANNEL, { per: 48 }).then((r) => r.blocks))
+      .then((blocks) => {
         if (cancelled) return;
         const list = buildItems(blocks);
         setItems(list);
@@ -56,32 +61,14 @@ export default function Home() {
     };
   }, []);
 
-  const loop = items.length ? [...items, ...items] : [];
-
   return (
     <div className="hero">
-      <div className="hero__marquee">
-        {status === "ok" && (
-          <div className="hero__track">
-            {loop.map((item, i) =>
-              item.type === "image" ? (
-                <img
-                  key={i}
-                  src={item.src}
-                  alt=""
-                  decoding="async"
-                  style={item.ratio ? { aspectRatio: item.ratio } : undefined}
-                />
-              ) : (
-                <div key={i} className="hero__word" aria-hidden={i >= items.length}>
-                  <span>{item.text}</span>
-                </div>
-              )
-            )}
-          </div>
-        )}
-        {status === "error" && <div className="hero__fallback">{t("home.noImages")}</div>}
-      </div>
+      {status === "ok" && <HeroMarquee items={items} />}
+      {status === "error" && (
+        <div className="hero__marquee">
+          <div className="hero__fallback">{t("home.noImages")}</div>
+        </div>
+      )}
       <div className="hero__content">
         <h1 ref={nameRef}>{home.name}</h1>
         <p className="eyebrow">{tr(home, "subtitle")}</p>
