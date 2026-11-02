@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { drawPlane, normalize } from "../lib/planeModel";
+import { puff } from "./CloudLayer";
 
 const LINEAR_SPEED = 190; // px/s sur l'orbite
 const DODGE_RADIUS = 120; // px — en deçà, l'avion esquive le curseur
@@ -53,6 +54,7 @@ export default function Plane({ anchorRef, mode = "orbit", size = 34, zBehind = 
     let bank = 0;
     let roll = 0; // tonneau quand on l'attrape
     let caughtUntil = 0;
+    let lastPuff = 0;
     let zIndex = null;
     // Balade (mode roam) : alterne entre "autour du nom" et "partout".
     let blend = 0;
@@ -221,6 +223,18 @@ export default function Plane({ anchorRef, mode = "orbit", size = 34, zBehind = 
       }
 
       drawPlane(ctx, px, forward, bank + roll);
+
+      // Traînée de nuage derrière la queue, seulement quand l'avion passe
+      // devant (derrière la sphère ou le nom, elle trahirait la profondeur).
+      if (p.depth >= 0 && now - lastPuff > 34) {
+        lastPuff = now;
+        const tail = size * 0.42;
+        puff(
+          x - forward[0] * tail + (Math.random() - 0.5) * 4,
+          y - forward[1] * tail + (Math.random() - 0.5) * 4,
+          "trail"
+        );
+      }
 
       const scale = (mode === "orbit" ? 1 + 0.28 * p.depth : 1.08) * (caught ? 1.3 : 1);
       el.style.transform = `translate3d(${x - size / 2}px, ${y - size / 2}px, 0) scale(${scale})`;

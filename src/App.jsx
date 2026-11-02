@@ -2,6 +2,9 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { HashRouter, Routes, Route, useLocation } from "react-router-dom";
 import Nav from "./components/Nav";
 import RadioPlayer from "./components/RadioPlayer";
+import CloudLayer from "./components/CloudLayer";
+import { CloudDefs, Sky } from "./components/Clouds";
+import { startReveal } from "./lib/reveal";
 import { applyDayNightAttribute } from "./lib/dayNight";
 import { LangProvider } from "./lib/i18n";
 import Home from "./pages/Home";
@@ -13,8 +16,8 @@ import Parcours from "./pages/Parcours";
 import About from "./pages/About";
 import Friends from "./pages/Friends";
 
-// Chargé à la demande : évite d'expédier three.js aux visiteurs qui ne voient
-// jamais le splash (déjà passés cette session, ou arrivée directe sur une page).
+// Chargé à la demande : le code du splash n'est envoyé qu'aux visiteurs qui le
+// voient (pas à ceux déjà passés cette session, ni aux arrivées directes).
 const Splash = lazy(() => import("./pages/Splash"));
 
 const SPLASH_KEY = "splash-seen";
@@ -48,6 +51,11 @@ function AppShell() {
     window.scrollTo(0, 0);
   }, [scrollKey]);
 
+  // Les rubriques se "condensent" en arrivant à l'écran (voir lib/reveal.js).
+  // Observé depuis #root, stable : les pages, elles, sont remontées à chaque
+  // changement (voile de brume).
+  useEffect(() => startReveal(document.getElementById("root")), []);
+
   function handleEnter() {
     sessionStorage.setItem(SPLASH_KEY, "1");
     setSplashSeen(true);
@@ -63,19 +71,24 @@ function AppShell() {
 
   return (
     <>
+      <Sky />
       <Nav />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/travaux" element={<Travaux />} />
-        <Route path="/travaux/:cat" element={<Travaux />} />
-        <Route path="/travaux/:cat/:slug" element={<Travaux />} />
-        <Route path="/music" element={<Music />} />
-        <Route path="/arena" element={<Arena />} />
-        <Route path="/arena/:slug" element={<ArenaChannel />} />
-        <Route path="/parcours" element={<Parcours />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/friends" element={<Friends />} />
-      </Routes>
+      {/* Changement de page : un voile de brume passe, la page en sort. */}
+      <div className="fog-veil" key={`veil-${scrollKey}`} aria-hidden="true" />
+      <div className="route-fog" key={scrollKey}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/travaux" element={<Travaux />} />
+          <Route path="/travaux/:cat" element={<Travaux />} />
+          <Route path="/travaux/:cat/:slug" element={<Travaux />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/arena" element={<Arena />} />
+          <Route path="/arena/:slug" element={<ArenaChannel />} />
+          <Route path="/parcours" element={<Parcours />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/friends" element={<Friends />} />
+        </Routes>
+      </div>
       <RadioPlayer />
     </>
   );
@@ -93,7 +106,9 @@ export default function App() {
   return (
     <LangProvider>
       <HashRouter>
+        <CloudDefs />
         <AppShell />
+        <CloudLayer />
       </HashRouter>
     </LangProvider>
   );

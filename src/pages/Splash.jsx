@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import SplashSphere from "../components/SplashSphere";
 import Plane from "../components/Plane";
+import { SplashClouds } from "../components/Clouds";
 import { useLang } from "../lib/i18n";
 
 // Un peu plus petit sur téléphone pour garder de l'air autour.
@@ -15,6 +16,7 @@ export default function Splash({ onEnter }) {
 
   return (
     <div className="splash">
+      <SplashClouds />
       <span className="splash__eyebrow">Chahîd EL BATTI</span>
       <div ref={sphereRef}>
         <SplashSphere size={size} onEnter={onEnter} />
