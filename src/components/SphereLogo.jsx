@@ -4,7 +4,8 @@ import { createSphereRenderer } from "../lib/sphereModel";
 const IDLE_SPEED_Y = 0.32; // rad/s
 const IDLE_SPEED_X = 0.05; // rad/s (léger tangage)
 
-// Sphère filaire + logo en rotation continue.
+// Bulle filaire en rotation continue, avec le personnage qui court après les
+// étoiles à l'intérieur (voir lib/sphereModel.js).
 // speedRef : multiplicateur de vitesse lu à chaque image (ex. accéléré au survol).
 // fps : plafond d'images par seconde (une petite icône n'a pas besoin de 60).
 export default function SphereLogo({ size, subdiv = 4, fps = 60, speedRef, className }) {
@@ -15,7 +16,8 @@ export default function SphereLogo({ size, subdiv = 4, fps = 60, speedRef, class
     let rotX = 0.35;
     let rotY = 0;
     let mult = 1;
-    draw(rotX, rotY);
+    let clock = Math.random() * 20; // chaque bulle démarre à un moment différent
+    draw(rotX, rotY, clock);
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
@@ -30,9 +32,10 @@ export default function SphereLogo({ size, subdiv = 4, fps = 60, speedRef, class
       mult += (target - mult) * (1 - Math.exp(-6 * dt));
       rotY += IDLE_SPEED_Y * mult * dt;
       rotX += IDLE_SPEED_X * mult * dt;
+      clock += dt * (1 + (mult - 1) * 0.5); // au survol, il court plus vite
       if (now - lastDraw >= 1000 / fps - 1) {
         lastDraw = now;
-        draw(rotX, rotY);
+        draw(rotX, rotY, clock);
       }
     }
     raf = requestAnimationFrame(frame);

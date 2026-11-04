@@ -55,6 +55,11 @@ export default function Plane({ anchorRef, mode = "orbit", size = 34, zBehind = 
     let roll = 0; // tonneau quand on l'attrape
     let caughtUntil = 0;
     let lastPuff = 0;
+    // Plongée (splash) : de temps en temps, l'avion traverse la bulle en ligne
+    // droite par son centre — le trou étoilé du personnage.
+    let dive = null;
+    let nextDive = prev + 9000 + Math.random() * 8000;
+    let squeeze = 1; // l'avion rapetisse en passant dans le trou
     let zIndex = null;
     // Balade (mode roam) : alterne entre "autour du nom" et "partout".
     let blend = 0;
@@ -160,7 +165,41 @@ export default function Plane({ anchorRef, mode = "orbit", size = 34, zBehind = 
           depth: b > 0.5 ? 1 : a.depth,
         };
       } else {
-        p = orbitPoint(dt);
+        p = dive ? null : orbitPoint(dt);
+        // Ne plonge que depuis l'arrière : il passe par le trou de derrière
+        // vers devant (le z-index bascule pile au centre).
+        if (!dive && now > nextDive && p.depth < -0.25) {
+          dive = { start: now, from: { x: p.x - anchor.cx, y: p.y - anchor.cy, z: p.z }, depth: p.depth, end: null };
+        }
+        if (dive) {
+          const k = Math.min(1, (now - dive.start) / 2300);
+          const s = 1 - 2 * smooth(k); // 1 → 0 (centre) → -1 (côté opposé)
+          const line = {
+            x: anchor.cx + dive.from.x * s,
+            y: anchor.cy + dive.from.y * s,
+            z: dive.from.z * s,
+            depth: dive.depth * s,
+          };
+          squeeze = 0.55 + 0.45 * Math.abs(s);
+          if (k < 1) {
+            p = line;
+          } else {
+            // Reprise de l'orbite à l'opposé, raccordée en douceur.
+            if (!dive.end) {
+              dive.end = now;
+              theta += Math.PI;
+            }
+            const o = orbitPoint(dt);
+            const b = smooth(Math.min(1, (now - dive.end) / 700));
+            p = { x: line.x + (o.x - line.x) * b, y: line.y + (o.y - line.y) * b, z: line.z + (o.z - line.z) * b, depth: o.depth };
+            if (b >= 1) {
+              dive = null;
+              nextDive = now + 9000 + Math.random() * 8000;
+            }
+          }
+        } else {
+          squeeze += (1 - squeeze) * (1 - Math.exp(-6 * dt));
+        }
       }
 
       // Esquive : plus le curseur approche, plus il s'écarte (avec une
@@ -236,7 +275,7 @@ export default function Plane({ anchorRef, mode = "orbit", size = 34, zBehind = 
         );
       }
 
-      const scale = (mode === "orbit" ? 1 + 0.28 * p.depth : 1.08) * (caught ? 1.3 : 1);
+      const scale = (mode === "orbit" ? (1 + 0.28 * p.depth) * squeeze : 1.08) * (caught ? 1.3 : 1);
       el.style.transform = `translate3d(${x - size / 2}px, ${y - size / 2}px, 0) scale(${scale})`;
       const zi = p.depth > 0 ? zFront : zBehind;
       if (zi !== zIndex) {

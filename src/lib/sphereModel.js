@@ -1,26 +1,16 @@
-// Sphère filaire + logo de l'artiste, rendue en Canvas 2D (pas de WebGL ni de
-// bibliothèque 3D) : quelques centaines de segments projetés à la main.
-
-// Marque de l'artiste (étoile + figure) — mêmes tracés que l'icône Accueil de
-// la nav, recadrés sur leur boîte englobante réelle. Réutilisés ici pour que
-// l'emblème au centre de la sphère soit rigoureusement identique au pictogramme.
-const LOGO_PATHS = [
-  "M737.28,929.61c-.7,2.85-2.28,9.48-4.96,10.35-6.38,2.09-10.01-3.75-10.31-9.04-.35-6.1-3.65-10.94-5.03-16.83l-2.7-11.46-4.06-35.38-7.41-55.82-3.12-26.04-2.18-12.98c-.86-5.16-.26-14.3-6.47-17l-36.36-2.33-26.66-9.69c-5.06-1.84-9.32-5.53-13.52-8.29-8.52-5.61-14.07-12.32-19.55-20.73l-7.49-11.51c-5.78-8.87-11.64-17.41-14.91-27.61-6.52-14.03-12.2-27.84-16-42.84l2.14-4.61c.51-1.1,3.73-.52,4.86.37l53.2,41.36,15.82,12.95,12.73,10.41,19.42,15.19c2.92,2.29,6.33-3.21,7.74-5.46l13.2-21.24c6.13-9.86,15.33-18.78,23.57-26.67l9.18-8.79,9.04-8.65-13.63-10.08c-4.98-3.68-11.55-6.58-15.62-11.43l-10.77-12.84c-5.62-6.7-9.01-15.73-13.49-23.43l-4.49-7.71-21.92-32.03,23.75-1.96,13.82,14.22c10.08,10.37,19.19,22.19,31.61,29.83l27.09,16.67,8,4.55c2.08,1.18,6.81,3.46,7.81,5.54,4.56,9.47,12.51,14.07,21.87,16.56l19.7,5.25,20.79,5.04c6.87,1.67,15.12,2.44,20.46,6.7l13.13,10.46,20.53,19,17.05,15.84c10.09,9.37,21.85,16.89,35.37,20.56l29.06,7.9c1.42.38,4.64,2.89,4.02,4.14s-3.39,4.11-4.77,4.24l-11.79,1.13-19.36.62-28.81.64c-5.16-3.57-10.4-4.63-16.05-4.64l-17.04-10.72c-19.07-12.41-38.77-22.53-59.38-32.39-4.4-2.1-7.09-2.97-11.11.87l-34.22,32.72c-3.74,3.57-9.26,6.95-11.48,11.3-4.94,9.67-3.7,19.66-.87,29.53.73,10.98,2.9,21.54,5.91,32.16l1.65,44.31c.33,8.88-1.77,18.26-2.06,27.32-.33,10.11-.48,20.47-3.25,30.21l-9.25,32.52-2.4,9.75Z",
-  "M624.48,596.82l-2.32,12.37c-1.43,7.61-2.45,14.4-5.76,22.05-.91-6.9-1.18-13.8-.49-20.77l1.37-13.9,1.67-19.08,2.77-25.94,1.17-16.54.87-25.22-19.14-4.14-9.94-1.06-11.43-.57-14.49,1.03c3.54-4.03,7.09-4.02,11.54-5.67l32.71-12.14,11.32-4.51c2.44-5.82,4.1-13.18,4.03-20.05l-.11-9.63-1.72-14.91c-.94-8.19-5.6-12.96-5.2-13.39l2.35-2.51c.55-.58,1.96,2.5,1.95,3.26l31.81,48.24,33.31-4.82,14.92-3.08,24.68-4.09c1.69-.73,3.79-.26,1.79,1.15l-27.67,11.16c-8.62,3.48-16.8,8.81-23.98,14.67-8.01,6.54-7.54,16.69-1.24,23.87,16.84,19.24,61.96,35.74,88.96,43.71,5.55,1.64,10.55,3.67,14.97,7.18l-14.68-3.21-27.63-8.33-24.2-8.1-46.09-18.41c-4.27-1.7-9.2-4.31-13.77-2.98-10.2,2.97-15.66,10.88-20.39,19.62-5.08,9.39-5.93,19.8-7.76,30.46l-4.16,24.29Z",
-  "M490.95,607.82c-5.22-.44-12.24,2.81-16.14,6.55-12.98,12.45-26.78,21.74-43.12,29.6-2.74,1.32-3.85,3.46-4.4,6.53-1.39-1.09-2.44-2.37-3.39-2.25l-6.33.77,51.4-36.49c2.69-1.91,6.26-7.86,8.14-10.57,8.65-12.5-5.57-36.79-18.89-48.92l-15.02-13.67-2.71-2.19c-.61-.5,1.43-2.72,2.05-2.22l2.77,2.22c8.83,7.07,19.05,12.9,26.02,21.79l16.95,21.6c1.09,1.39,3.62,4.01,5.07,3.55l6.6-2.08c8.16-2.57,16.03-5,23.55-9.31l28.35-16.28,1.2,1.51-24.6,17.13c-6.84,4.76-12.5,9.75-18.05,16.13-4.43,5.1-5.84,10.45-1.86,17.27,10.49,17.99,25.56,32.01,40.02,48.66-18.3-6.09-29.87-20.86-39.61-35.85-4.19-6.44-9.11-12.72-17.98-13.47Z",
-  "M809.36,598.81l-1.77,10.58-17.55,5.14c-10.51,3.08-15.9-5.9-18.56-13.36-2.97-8.36-3.14-13.46,1.52-21.31,1.39-2.34,3.05-6.91,5.24-8.02,2.91-1.49,8.51-1.13,11.67-.68l10.83,1.53c4.56.64,11.61,1.69,14.2,5.92l-5.59,20.22Z",
-  "M554.07,508.21c-12.52,3.64-24.41,7.8-39.26,10.4,7.76-4.77,16.81-6.89,26.2-9.35,4.01-1.05,7.49-1.64,13.06-1.05Z",
-];
+// Bulle filaire + personnage en 3D (d'après le dessin de l'artiste) qui court
+// après des étoiles. Rendu en Canvas 2D, sans WebGL ni bibliothèque 3D : les
+// faces sont projetées à la main et dessinées de la plus lointaine à la plus
+// proche.
 
 const WIRE_COLOR = "#3f00ff"; // var(--blue)
 const WIRE_OPACITY = 0.8;
-const LOGO_COLOR = "#0b0a14"; // var(--ink)
 
-// Caméra : perspective 45°, placée à 2.7 du centre d'une sphère de rayon 1.
+// Caméra : perspective 45°, placée à 2.7 du centre d'une bulle de rayon 1.
 const CAMERA_Z = 2.7;
 const TAN_HALF_FOV = Math.tan((45 / 2) * (Math.PI / 180));
 
-// --- Sphère : icosaèdre subdivisé (4 segments par arête), projeté sur la sphère ---
+// --- Bulle : icosaèdre subdivisé, projeté sur la sphère ---
 function buildWireframe(subdiv = 4) {
   const t = (1 + Math.sqrt(5)) / 2;
   const base = [
@@ -79,98 +69,271 @@ function buildWireframe(subdiv = 4) {
   };
 }
 
-// --- Logo : tracés SVG aplatis en polygones, centrés dans le plan z = 0 ---
-function flattenPath(d, samples = 8) {
-  const tokens = d.match(/[a-zA-Z]|-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/g);
-  const pts = [];
-  let i = 0;
-  let cmd = null;
-  let x = 0;
-  let y = 0;
-  let lastCtrl = null;
-  const num = () => parseFloat(tokens[i++]);
-  function cubic(x1, y1, x2, y2, x3, y3) {
-    for (let s = 1; s <= samples; s++) {
-      const t = s / samples;
-      const u = 1 - t;
-      pts.push([
-        u * u * u * x + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3,
-        u * u * u * y + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3,
-      ]);
-    }
-    lastCtrl = [x2, y2];
-    x = x3;
-    y = y3;
+// --- Le personnage (d'après le dessin de l'artiste) -----------------------
+// Repère du personnage : x à droite, y en haut, z vers le spectateur ; unité =
+// rayon de la bulle. Torse au centre, percé d'une étoile (l'avion la traverse),
+// quatre membres effilés à arête centrale (le pli dessiné le long de chaque
+// membre), tête facettée entre les deux bras.
+
+const DEG = Math.PI / 180;
+const TORSO_R = 0.2;
+const HOLE_OUT = 0.13; // étoile évidée au centre du torse
+const HOLE_IN = 0.05;
+const TORSO_TH = 0.05;
+
+// [angle de base, longueur, côté de la courbure, phase de course]
+// A et B (de part et d'autre de la tête) sont les bras, C et D les jambes.
+const LIMBS = [
+  { angle: 106 * DEG, length: 0.6, bend: -1, phase: 0 }, // A : bras levé
+  { angle: -10 * DEG, length: 0.62, bend: 1, phase: Math.PI }, // B : bras tendu
+  { angle: 159 * DEG, length: 0.58, bend: 1, phase: Math.PI }, // C : jambe arrière
+  { angle: -81 * DEG, length: 0.68, bend: -1, phase: 0 }, // D : jambe d'appui
+];
+const HEAD = { x: 0.17, y: 0.255, r: 0.11 };
+
+const RUN_SPEED = 7; // rad/s : cadence de la course
+const CHASE_SPEED = 0.55; // rad/s : les étoiles tournent, il les suit
+const CHASE_LAG = 1.0; // rad de retard sur les étoiles
+
+// Membre le long de +x, en forme de pétale (plus étroit à la base, large au
+// premier tiers, bout arrondi), section en losange : le pli central apparaît
+// grâce aux deux pans éclairés différemment, comme le trait du dessin.
+function buildLimb(length, bendSide) {
+  const S = 10;
+  const verts = [];
+  const faces = [];
+  for (let i = 0; i <= S; i++) {
+    const t = i / S;
+    const x = TORSO_R * 0.5 + length * t;
+    const yc = bendSide * Math.sin(Math.PI * t) * length * 0.07;
+    const petal = Math.pow(Math.sin(Math.PI * (0.18 + 0.82 * t)), 0.6);
+    const ww = Math.max(0.105 * petal, 0.003);
+    const th = Math.max(0.05 * petal, 0.002);
+    verts.push([x, yc + ww, 0], [x, yc, th], [x, yc - ww, 0], [x, yc, -th]);
   }
-  while (i < tokens.length) {
-    if (/[a-zA-Z]/.test(tokens[i])) cmd = tokens[i++];
-    switch (cmd) {
-      case "M":
-        x = num();
-        y = num();
-        pts.push([x, y]);
-        cmd = "L";
-        break;
-      case "l":
-        x += num();
-        y += num();
-        pts.push([x, y]);
-        lastCtrl = null;
-        break;
-      case "L":
-        x = num();
-        y = num();
-        pts.push([x, y]);
-        lastCtrl = null;
-        break;
-      case "c": {
-        const [x1, y1, x2, y2, x3, y3] = [num(), num(), num(), num(), num(), num()];
-        cubic(x + x1, y + y1, x + x2, y + y2, x + x3, y + y3);
-        break;
-      }
-      case "s": {
-        const [x2, y2, x3, y3] = [num(), num(), num(), num()];
-        const [x1, y1] = lastCtrl ? [2 * x - lastCtrl[0], 2 * y - lastCtrl[1]] : [x, y];
-        cubic(x1, y1, x + x2, y + y2, x + x3, y + y3);
-        break;
-      }
-      case "Z":
-      case "z":
-        i = tokens.length;
-        break;
-      default:
-        i++; // commande non utilisée par ces tracés
+  for (let i = 0; i < S; i++) {
+    for (let k = 0; k < 4; k++) {
+      const a = i * 4 + k;
+      const b = i * 4 + ((k + 1) % 4);
+      faces.push({ idx: [a, b, b + 4, a + 4], kind: "body" });
     }
   }
-  return pts;
+  // Base fermée (cachée dans le torse) : pas besoin de face.
+  return { verts, faces };
 }
 
-function buildLogo() {
-  const polys = LOGO_PATHS.map((d) => flattenPath(d));
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const p of polys.flat()) {
-    minX = Math.min(minX, p[0]);
-    maxX = Math.max(maxX, p[0]);
-    minY = Math.min(minY, p[1]);
-    maxY = Math.max(maxY, p[1]);
+function starRing(points, outer, inner, z, rotation = 0) {
+  const ring = [];
+  for (let i = 0; i < points * 2; i++) {
+    const r = i % 2 === 0 ? outer : inner;
+    const a = rotation + (i / (points * 2)) * Math.PI * 2;
+    ring.push([Math.cos(a) * r, Math.sin(a) * r, z]);
   }
-  const cx = (minX + maxX) / 2;
-  const cy = (minY + maxY) / 2;
-  const targetDiameter = 1.62; // légèrement inférieur au diamètre de la sphère (2)
-  const scale = targetDiameter / Math.max(maxX - minX, maxY - minY);
-  // SVG (y vers le bas) -> repère 3D (y vers le haut)
-  return polys.map((poly) => poly.map(([px, py]) => [(px - cx) * scale, -(py - cy) * scale]));
+  return ring;
 }
 
-// Géométries partagées (le splash et l'icône Accueil de la nav).
+// Torse : disque épais percé d'une étoile à 4 branches.
+function buildTorso() {
+  const N = 20;
+  const verts = [];
+  const outerF = [];
+  const outerB = [];
+  for (let i = 0; i < N; i++) {
+    const a = (i / N) * Math.PI * 2;
+    outerF.push(verts.length);
+    verts.push([Math.cos(a) * TORSO_R, Math.sin(a) * TORSO_R, TORSO_TH]);
+    outerB.push(verts.length);
+    verts.push([Math.cos(a) * TORSO_R, Math.sin(a) * TORSO_R, -TORSO_TH]);
+  }
+  const holeF = [];
+  const holeB = [];
+  for (const p of starRing(4, HOLE_OUT, HOLE_IN, TORSO_TH, Math.PI / 4)) {
+    holeF.push(verts.length);
+    verts.push(p);
+    holeB.push(verts.length);
+    verts.push([p[0], p[1], -TORSO_TH]);
+  }
+  const faces = [
+    { idx: outerF, hole: [...holeF].reverse(), kind: "body" },
+    { idx: [...outerB].reverse(), hole: holeB, kind: "body" },
+  ];
+  for (let i = 0; i < N; i++) {
+    const j = (i + 1) % N;
+    faces.push({ idx: [outerF[i], outerF[j], outerB[j], outerB[i]], kind: "body" });
+  }
+  for (let i = 0; i < holeF.length; i++) {
+    const j = (i + 1) % holeF.length;
+    faces.push({ idx: [holeF[j], holeF[i], holeB[i], holeB[j]], kind: "body" });
+  }
+  return { verts, faces };
+}
+
+// Tête : petite sphère à facettes (icosaèdre subdivisé une fois), un peu aplatie.
+function buildHead() {
+  const t = (1 + Math.sqrt(5)) / 2;
+  let verts = [
+    [-1, t, 0], [1, t, 0], [-1, -t, 0], [1, -t, 0],
+    [0, -1, t], [0, 1, t], [0, -1, -t], [0, 1, -t],
+    [t, 0, -1], [t, 0, 1], [-t, 0, -1], [-t, 0, 1],
+  ];
+  let tris = [
+    [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+    [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+    [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+    [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1],
+  ];
+  const mid = new Map();
+  const midpoint = (a, b) => {
+    const key = a < b ? `${a},${b}` : `${b},${a}`;
+    if (!mid.has(key)) {
+      mid.set(key, verts.length);
+      verts.push(verts[a].map((v, i) => (v + verts[b][i]) / 2));
+    }
+    return mid.get(key);
+  };
+  const next = [];
+  for (const [a, b, c] of tris) {
+    const ab = midpoint(a, b);
+    const bc = midpoint(b, c);
+    const ca = midpoint(c, a);
+    next.push([a, ab, ca], [b, bc, ab], [c, ca, bc], [ab, bc, ca]);
+  }
+  tris = next;
+  verts = verts.map((v) => {
+    const l = Math.hypot(v[0], v[1], v[2]);
+    return [HEAD.x + (v[0] / l) * HEAD.r, HEAD.y + (v[1] / l) * HEAD.r * 1.08, (v[2] / l) * HEAD.r * 0.85];
+  });
+  return { verts, faces: tris.map((idx) => ({ idx, kind: "body" })) };
+}
+
+// Étoile épaisse (prisme en étoile).
+function buildStar(points, outer, inner, thick) {
+  const front = starRing(points, outer, inner, thick, Math.PI / 2);
+  const back = front.map(([x, y]) => [x, y, -thick]);
+  const n = front.length;
+  const verts = [...front, ...back];
+  const faces = [
+    { idx: front.map((_, i) => i), kind: "star" },
+    { idx: back.map((_, i) => n + i).reverse(), kind: "star" },
+  ];
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    faces.push({ idx: [i, j, n + j, n + i], kind: "star" });
+  }
+  return { verts, faces };
+}
+
+// [mesh, rayon d'orbite, phase, vitesse de rotation propre]
+function buildStars() {
+  return [
+    { mesh: buildStar(5, 0.15, 0.065, 0.035), radius: 0.8, phase: 0, spin: 1.6 },
+    { mesh: buildStar(4, 0.1, 0.038, 0.03), radius: 0.72, phase: 2.4, spin: -2.2 },
+  ];
+}
+
+let figureCache = null;
+function buildFigure() {
+  if (!figureCache) {
+    figureCache = {
+      limbs: LIMBS.map((l) => ({ ...l, mesh: buildLimb(l.length, l.bend) })),
+      torso: buildTorso(),
+      head: buildHead(),
+      stars: buildStars(),
+    };
+  }
+  return figureCache;
+}
+
+// Petites matrices 3×3 (lignes) : rotations autour de x, y, z.
+const rotX = (a) => [1, 0, 0, 0, Math.cos(a), -Math.sin(a), 0, Math.sin(a), Math.cos(a)];
+const rotY = (a) => [Math.cos(a), 0, Math.sin(a), 0, 1, 0, -Math.sin(a), 0, Math.cos(a)];
+const rotZ = (a) => [Math.cos(a), -Math.sin(a), 0, Math.sin(a), Math.cos(a), 0, 0, 0, 1];
+function mul(a, b) {
+  const m = new Array(9);
+  for (let r = 0; r < 3; r++)
+    for (let c = 0; c < 3; c++)
+      m[r * 3 + c] = a[r * 3] * b[c] + a[r * 3 + 1] * b[3 + c] + a[r * 3 + 2] * b[6 + c];
+  return m;
+}
+const apply = (m, [x, y, z]) => [
+  m[0] * x + m[1] * y + m[2] * z,
+  m[3] * x + m[4] * y + m[5] * z,
+  m[6] * x + m[7] * y + m[8] * z,
+];
+
+const LIGHT = (() => {
+  const l = [-0.45, 0.6, 0.66];
+  const n = Math.hypot(...l);
+  return l.map((v) => v / n);
+})();
+const SHADES = {
+  body: [[11, 10, 20], [96, 92, 140]], // encre → gris bleuté éclairé
+  star: [[24, 8, 96], [120, 92, 255]], // étoiles bleu nuit → bleu de la marque
+};
+
+// Toutes les faces du personnage et des étoiles à l'instant t, dans le repère
+// de la caméra (z vers le spectateur), prêtes à être triées et dessinées.
+function figureFaces(t) {
+  const fig = buildFigure();
+  const out = [];
+  const chase = CHASE_SPEED * t;
+  // Le personnage tourne à la poursuite des étoiles, se balance un peu en 3D,
+  // et rebondit au rythme de sa course.
+  const body = mul(rotY(0.38 * Math.sin(t * 0.5)), mul(rotX(0.14 * Math.sin(t * 0.37)), rotZ(chase - CHASE_LAG)));
+  const bob = 0.014 * Math.sin(t * RUN_SPEED * 2);
+  const place = (m, offset = [0, bob, 0]) => (v) => {
+    const p = apply(m, v);
+    return [p[0] + offset[0], p[1] + offset[1], p[2] + offset[2]];
+  };
+
+  const pushMesh = (mesh, transform) => {
+    const tv = mesh.verts.map(transform);
+    for (const face of mesh.faces) {
+      out.push({
+        pts: face.idx.map((i) => tv[i]),
+        hole: face.hole?.map((i) => tv[i]),
+        kind: face.kind,
+      });
+    }
+  };
+
+  // Membres : balancier de course (dans le plan) + mouvement vers / loin du
+  // spectateur, bras et jambes en opposition.
+  for (const limb of fig.limbs) {
+    const swing = Math.sin(t * RUN_SPEED + limb.phase);
+    const local = mul(rotZ(limb.angle + 0.22 * swing), rotY(-0.38 * Math.cos(t * RUN_SPEED + limb.phase)));
+    pushMesh(limb.mesh, place(mul(body, local)));
+  }
+  pushMesh(fig.torso, place(body));
+  pushMesh(fig.head, place(body));
+
+  // Étoiles : orbite inclinée (elles passent devant et derrière lui), en avance
+  // sur lui, et tournent sur elles-mêmes.
+  const orbitTilt = rotX(1.05);
+  for (const star of fig.stars) {
+    const a = chase + star.phase;
+    const center = apply(orbitTilt, [Math.cos(a) * star.radius, Math.sin(a) * star.radius, 0]);
+    const spin = mul(rotZ(t * star.spin), rotY(0.5 * Math.sin(t * 0.9 + star.phase)));
+    pushMesh(star.mesh, place(spin, center));
+  }
+  return out;
+}
+
+// --- Rendu --------------------------------------------------------------
+
 const wireCache = new Map();
-let logoCache = null;
 
-// Prépare un canvas de `size` px CSS et renvoie draw(rotX, rotY).
-// subdiv : finesse du maillage (4 pour le splash, 2 pour une petite icône).
+function shade(kind, light) {
+  const [d, l] = SHADES[kind];
+  const k = Math.pow(light, 1.4);
+  return `rgb(${Math.round(d[0] + (l[0] - d[0]) * k)}, ${Math.round(d[1] + (l[1] - d[1]) * k)}, ${Math.round(
+    d[2] + (l[2] - d[2]) * k
+  )})`;
+}
+
+// Prépare un canvas de `size` px CSS et renvoie draw(rotX, rotY, t) :
+// rotX / rotY orientent la bulle, t (secondes) anime le personnage et les étoiles.
+// subdiv : finesse du maillage de la bulle (4 pour le splash, 2 pour une icône).
 export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.round(size * dpr);
@@ -181,75 +344,68 @@ export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
 
   if (!wireCache.has(subdiv)) wireCache.set(subdiv, buildWireframe(subdiv));
   const wire = wireCache.get(subdiv);
-  const logo = (logoCache ||= buildLogo());
-  const projected = wire.vertices.map(() => [0, 0, 0]);
   const half = size / 2;
-  const tmp = [0, 0, 0];
-  let m = null;
+  const seam = Math.max(0.6, size / 260); // referme les jointures entre faces
 
-  // Rotation (ordre X puis Y, comme l'Euler "XYZ" de three.js) + projection.
-  function updateMatrix(rotX, rotY) {
-    const ca = Math.cos(rotX);
-    const sa = Math.sin(rotX);
-    const cb = Math.cos(rotY);
-    const sb = Math.sin(rotY);
-    m = [cb, 0, sb, sa * sb, ca, -sa * cb, -ca * sb, sa, ca * cb];
-  }
-  function project(x, y, z, out) {
-    const wx = m[0] * x + m[1] * y + m[2] * z;
-    const wy = m[3] * x + m[4] * y + m[5] * z;
-    const wz = m[6] * x + m[7] * y + m[8] * z;
-    const k = half / ((CAMERA_Z - wz) * TAN_HALF_FOV);
-    out[0] = half + wx * k;
-    out[1] = half - wy * k;
-    out[2] = wz;
-    return out;
+  const project = ([x, y, z]) => {
+    const k = half / ((CAMERA_Z - z) * TAN_HALF_FOV);
+    return [half + x * k, half - y * k];
+  };
+
+  function trace(points) {
+    points.forEach((p, i) => {
+      const [x, y] = project(p);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.closePath();
   }
 
-  function draw(rotX, rotY) {
-    updateMatrix(rotX, rotY);
+  function draw(bubbleX, bubbleY, t = 0) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
 
-    wire.vertices.forEach((v, i) => project(v[0], v[1], v[2], projected[i]));
-
-    // Le logo est un plan passant par le centre : les arêtes situées du
-    // même côté que la caméra passent devant lui, les autres derrière.
-    const n = [m[2], m[5], m[8]]; // normale du plan du logo (axe z local)
-    const cameraSide = Math.sign(n[2] * CAMERA_Z) || 1;
+    // Bulle : arêtes de l'arrière avant le personnage, celles de l'avant après.
+    const m = mul(rotX(bubbleX), rotY(bubbleY));
+    const wv = wire.vertices.map((v) => apply(m, v));
     const back = new Path2D();
     const front = new Path2D();
     for (const [a, b] of wire.edges) {
-      const va = wire.vertices[a];
-      const vb = wire.vertices[b];
-      const mx = va[0] + vb[0];
-      const my = va[1] + vb[1];
-      const mz = va[2] + vb[2];
-      const wx = m[0] * mx + m[1] * my + m[2] * mz;
-      const wy = m[3] * mx + m[4] * my + m[5] * mz;
-      const wz = m[6] * mx + m[7] * my + m[8] * mz;
-      const side = n[0] * wx + n[1] * wy + n[2] * wz;
-      const path = Math.sign(side) === cameraSide ? front : back;
-      path.moveTo(projected[a][0], projected[a][1]);
-      path.lineTo(projected[b][0], projected[b][1]);
+      const path = wv[a][2] + wv[b][2] > 0 ? front : back;
+      const [ax, ay] = project(wv[a]);
+      const [bx, by] = project(wv[b]);
+      path.moveTo(ax, ay);
+      path.lineTo(bx, by);
     }
-
     ctx.lineWidth = 1.15 / dpr;
     ctx.strokeStyle = WIRE_COLOR;
     ctx.globalAlpha = WIRE_OPACITY;
     ctx.stroke(back);
-
     ctx.globalAlpha = 1;
-    ctx.fillStyle = LOGO_COLOR;
-    for (const poly of logo) {
+
+    // Personnage + étoiles : faces triées de la plus lointaine à la plus proche.
+    const faces = figureFaces(t);
+    for (const f of faces) {
+      const [a, b, c] = f.pts;
+      const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
+      const v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
+      const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+      const len = Math.hypot(n[0], n[1], n[2]) || 1;
+      f.light = Math.abs((n[0] * LIGHT[0] + n[1] * LIGHT[1] + n[2] * LIGHT[2]) / len);
+      f.depth = f.pts.reduce((s, p) => s + p[2], 0) / f.pts.length;
+    }
+    faces.sort((p, q) => p.depth - q.depth);
+    ctx.lineJoin = "round";
+    ctx.lineWidth = seam;
+    for (const f of faces) {
+      const color = shade(f.kind, f.light);
       ctx.beginPath();
-      poly.forEach(([x, y], i) => {
-        project(x, y, 0, tmp);
-        if (i === 0) ctx.moveTo(tmp[0], tmp[1]);
-        else ctx.lineTo(tmp[0], tmp[1]);
-      });
-      ctx.closePath();
-      ctx.fill();
+      trace(f.pts);
+      if (f.hole) trace(f.hole);
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+      ctx.fill("evenodd");
+      if (!f.hole) ctx.stroke();
     }
 
     ctx.globalAlpha = WIRE_OPACITY;
