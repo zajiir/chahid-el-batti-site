@@ -1,6 +1,6 @@
-// Bulle filaire + personnage (d'après le dessin de l'artiste), légèrement
-// gonflé en 3D et percé de l'étoile dessinée dans son torse, avec deux étoiles
-// qui tournent autour de lui. Rendu en Canvas 2D, sans WebGL ni bibliothèque 3D.
+// Bulle filaire en 3D + personnage (d'après le dessin de l'artiste) à plat,
+// percé de l'étoile dessinée dans son torse, avec deux étoiles qui tournent
+// autour de lui. Rendu en Canvas 2D, sans WebGL ni bibliothèque 3D.
 import { FIGURE } from "./figureShape";
 
 const WIRE_COLOR = "#3f00ff"; // var(--blue)
@@ -145,10 +145,10 @@ function flattenPath(d, samples = 8) {
 }
 
 
-// --- Le personnage et ses étoiles, "gonflés" en 3D -------------------------
-// Chaque forme est extrudée en plusieurs couches dont le contour enfle au
-// milieu : un volume légèrement gonflé, aux bords arrondis. L'étoile du torse
-// traverse le personnage de part en part (l'avion passe dedans).
+// --- Le personnage et ses étoiles, à plat --------------------------------
+// Le personnage du dessin (silhouette pleine, l'étoile du torse évidée — l'avion
+// passe dedans — et les traits intérieurs des membres en blanc) et deux
+// étoiles qui tournent autour de lui, le tout en 2D dans un même plan.
 const PATH_BIG_STAR = 1;
 const PATH_SMALL_STAR = 2;
 
@@ -156,13 +156,11 @@ const PATH_SMALL_STAR = 2;
 const FIGURE_SCALE = 0.82 / 304; // la jambe la plus longue s'arrête avant la bulle
 const STAR_SCALE = 0.0016;
 
-const FIGURE_DEPTH = 0.06; // demi-épaisseur
-const FIGURE_BULGE = 0.022; // gonflement du contour au milieu de l'épaisseur
-const STAR_DEPTH = 0.035;
-const STAR_BULGE = 0.014;
+const ORBIT_SPEED = 0.6; // rad/s : les étoiles tournent autour de lui
 
-const CHASE_SPEED = 0.6; // rad/s : les étoiles tournent autour de lui
-const RUN = 7; // rad/s : rebond de course
+const FIGURE_COLOR = "#0b0a14"; // var(--ink)
+const FOLD_COLOR = "rgba(255, 255, 255, 0.8)";
+const STAR_COLOR = "#2a0fb8";
 
 const centerOf = (poly) => {
   let minX = Infinity;
@@ -178,7 +176,7 @@ const centerOf = (poly) => {
   return [(minX + maxX) / 2, (minY + maxY) / 2];
 };
 
-// SVG (y vers le bas) -> repère 3D (y vers le haut), centré et mis à l'échelle.
+// SVG / image (y vers le bas) -> repère 3D (y vers le haut), centré et mis à l'échelle.
 const toLocal = (poly, [cx, cy], scale) => poly.map(([x, y]) => [(x - cx) * scale, -(y - cy) * scale]);
 
 let shapesCache = null;
@@ -192,10 +190,11 @@ function buildShapes() {
         polys: [toLocal(FIGURE.silhouette, origin, FIGURE_SCALE)],
         holes: [toLocal(FIGURE.hole, origin, FIGURE_SCALE)],
         folds: FIGURE.folds.map((f) => toLocal(f, origin, FIGURE_SCALE)),
+        color: FIGURE_COLOR,
       },
       stars: [
-        { polys: [toLocal(big, centerOf(big), STAR_SCALE)], holes: [], radius: 0.8, phase: 0, spin: 0.9 },
-        { polys: [toLocal(small, centerOf(small), STAR_SCALE)], holes: [], radius: 0.74, phase: 2.6, spin: -1.3 },
+        { polys: [toLocal(big, centerOf(big), STAR_SCALE)], holes: [], color: STAR_COLOR, radius: 0.82, phase: 0, spin: 0.9 },
+        { polys: [toLocal(small, centerOf(small), STAR_SCALE)], holes: [], color: STAR_COLOR, radius: 0.74, phase: 2.6, spin: -1.3 },
       ],
     };
   }
@@ -219,51 +218,30 @@ const apply = (m, [x, y, z]) => [
   m[6] * x + m[7] * y + m[8] * z,
 ];
 
-// Teintes : [bord, face éclairée claire, face sombre]
-const PALETTES = {
-  figure: { rim: [11, 10, 20], rimLit: [44, 41, 66], faceLight: "#56527c", faceDark: "#0b0a14", fold: "rgba(160, 150, 235, 0.55)" },
-  star: { rim: [28, 10, 112], rimLit: [62, 36, 200], faceLight: "#8f74ff", faceDark: "#2a0fb8" },
-};
-
-// Position et orientation de chaque objet à l'instant t (repère caméra).
+// Position et orientation de chaque forme à l'instant t (repère caméra).
+// Le plan du dessin se balance à peine (il reste lisible) ; les étoiles
+// tournent autour du personnage dans ce même plan, en pivotant sur elles-mêmes.
 function scene(t) {
   const shapes = buildShapes();
-  const chase = CHASE_SPEED * t;
-  // Il se balance en 3D (on voit son épaisseur), se penche vers les étoiles
-  // qui le devancent et rebondit comme s'il leur courait après.
-  const lean = 0.16 * Math.sin(chase - 1.1);
-  const figure = {
-    shape: shapes.figure,
-    palette: PALETTES.figure,
-    depth: FIGURE_DEPTH,
-    bulge: FIGURE_BULGE,
-    m: mul(rotY(0.5 * Math.sin(t * 0.45)), mul(rotX(0.18 * Math.sin(t * 0.33)), rotZ(lean))),
-    offset: [0, 0.018 * Math.abs(Math.sin(t * RUN)) - 0.009, 0],
-  };
-  const orbitTilt = rotX(1.05);
+  const plane = mul(rotY(0.22 * Math.sin(t * 0.45)), rotX(0.1 * Math.sin(t * 0.33)));
+  const figure = { shape: shapes.figure, m: plane, offset: [0, 0, 0] };
   const stars = shapes.stars.map((s) => {
-    const a = chase + s.phase;
+    const a = ORBIT_SPEED * t + s.phase;
     return {
       shape: s,
-      palette: PALETTES.star,
-      depth: STAR_DEPTH,
-      bulge: STAR_BULGE,
-      m: mul(rotY(0.6 * Math.sin(t * 0.8 + s.phase)), rotZ(t * s.spin)),
-      offset: apply(orbitTilt, [Math.cos(a) * s.radius, Math.sin(a) * s.radius, 0]),
+      m: mul(plane, rotZ(t * s.spin)),
+      offset: apply(plane, [Math.cos(a) * s.radius, Math.sin(a) * s.radius, 0]),
     };
   });
   return [figure, ...stars];
 }
 
-const mix = (a, b, k) => a.map((v, i) => Math.round(v + (b[i] - v) * k));
-
 // --- Rendu --------------------------------------------------------------
 
 const wireCache = new Map();
-const LAYERS = 9;
 
 // Prépare un canvas de `size` px CSS et renvoie draw(rotX, rotY, t) :
-// rotX / rotY orientent la bulle, t (secondes) anime le personnage et les étoiles.
+// rotX / rotY orientent la bulle, t (secondes) anime les étoiles.
 // subdiv : finesse du maillage de la bulle (4 pour le splash, 2 pour une icône).
 export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -276,98 +254,43 @@ export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
   if (!wireCache.has(subdiv)) wireCache.set(subdiv, buildWireframe(subdiv));
   const wire = wireCache.get(subdiv);
   const half = size / 2;
-  const pxPerUnit = (z) => half / ((CAMERA_Z - z) * TAN_HALF_FOV);
   const project = ([x, y, z]) => {
-    const k = pxPerUnit(z);
+    const k = half / ((CAMERA_Z - z) * TAN_HALF_FOV);
     return [half + x * k, half - y * k];
   };
 
-  // Une forme plane (polygones + trous) extrudée en couches ; le contour de
-  // chaque couche est épaissi selon sa position dans l'épaisseur (bombé).
-  function drawInflated(obj) {
-    const { shape, palette, depth, bulge, m, offset } = obj;
-    const facing = m[8] >= 0 ? 1 : -1; // la face +z regarde-t-elle la caméra ?
-    const kPx = pxPerUnit(offset[2]);
-    const layers = [];
-    for (let i = 0; i < LAYERS; i++) layers.push(-1 + (2 * i) / (LAYERS - 1));
-    // De la couche la plus lointaine à la plus proche.
-    layers.sort((a, b) => a * facing - b * facing);
-
-    const toScreen = (poly, z) =>
-      poly.map(([x, y]) => {
-        const p = apply(m, [x, y, z]);
-        return project([p[0] + offset[0], p[1] + offset[1], p[2] + offset[2]]);
-      });
-
-    layers.forEach((layer, index) => {
-      const z = layer * depth;
-      const front = index === LAYERS - 1; // la face visible
-      // Remplissage : silhouette moins les trous. Contour bombé : silhouette
-      // seulement — le trou garde des parois droites et reste bien ouvert.
-      const fill = new Path2D();
-      const outline = new Path2D();
-      let minX = Infinity;
-      let minY = Infinity;
-      let maxX = -Infinity;
-      let maxY = -Infinity;
-      for (const poly of shape.polys) {
-        const pts = toScreen(poly, z);
-        for (const path of [fill, outline]) {
-          pts.forEach(([x, y], i) => (i === 0 ? path.moveTo(x, y) : path.lineTo(x, y)));
-          path.closePath();
-        }
-        if (front) {
-          for (const [x, y] of pts) {
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
-            minY = Math.min(minY, y);
-            maxY = Math.max(maxY, y);
-          }
-        }
-      }
-      for (const hole of shape.holes) {
-        toScreen(hole, z).forEach(([x, y], i) => (i === 0 ? fill.moveTo(x, y) : fill.lineTo(x, y)));
-        fill.closePath();
-      }
-      let color;
-      if (front) {
-        // Face visible : léger reflet en haut à gauche, comme une matière bombée.
-        color = ctx.createLinearGradient(minX, minY, maxX, maxY);
-        color.addColorStop(0, palette.faceLight);
-        color.addColorStop(0.5, palette.faceDark);
-        color.addColorStop(1, palette.faceDark);
-      } else {
-        const k = (layer * facing + 1) / 2; // 0 au fond → 1 vers l'avant
-        color = `rgb(${mix(palette.rim, palette.rimLit, k * 0.8).join(",")})`;
-      }
-      const width = 2 * bulge * Math.sqrt(Math.max(0, 1 - layer * layer)) * kPx;
-      if (width > 0.3) {
-        ctx.lineJoin = "round";
-        ctx.lineWidth = width;
-        ctx.strokeStyle = typeof color === "string" ? color : palette.faceDark;
-        ctx.stroke(outline);
-      }
-      ctx.fillStyle = color;
-      ctx.fill(fill, "evenodd");
-      // Sur la face visible : les traits intérieurs des membres, comme des plis.
-      if (front && shape.folds) {
-        ctx.beginPath();
-        for (const fold of shape.folds) {
-          toScreen(fold, z).forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
-          ctx.closePath();
-        }
-        ctx.lineWidth = Math.max(0.6, kPx * 0.006);
-        ctx.strokeStyle = palette.fold;
-        ctx.stroke();
-      }
+  function addPolygon(path, poly, { m, offset }) {
+    poly.forEach(([x, y], i) => {
+      const p = apply(m, [x, y, 0]);
+      const [sx, sy] = project([p[0] + offset[0], p[1] + offset[1], p[2] + offset[2]]);
+      if (i === 0) path.moveTo(sx, sy);
+      else path.lineTo(sx, sy);
     });
+    path.closePath();
+  }
+
+  function drawShape(obj) {
+    const { shape } = obj;
+    const fill = new Path2D();
+    for (const poly of shape.polys) addPolygon(fill, poly, obj);
+    for (const hole of shape.holes) addPolygon(fill, hole, obj);
+    ctx.fillStyle = shape.color;
+    ctx.fill(fill, "evenodd");
+    if (shape.folds) {
+      const folds = new Path2D();
+      for (const fold of shape.folds) addPolygon(folds, fold, obj);
+      ctx.lineWidth = Math.max(0.6, size / 320);
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = FOLD_COLOR;
+      ctx.stroke(folds);
+    }
   }
 
   function draw(bubbleX, bubbleY, t = 0) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, size, size);
 
-    // Bulle : arêtes de l'arrière avant le personnage, celles de l'avant après.
+    // Bulle : arêtes de l'arrière avant le dessin, celles de l'avant après.
     const bm = mul(rotX(bubbleX), rotY(bubbleY));
     const wv = wire.vertices.map((v) => apply(bm, v));
     const back = new Path2D();
@@ -385,9 +308,7 @@ export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
     ctx.stroke(back);
     ctx.globalAlpha = 1;
 
-    // Étoiles derrière lui, le personnage, puis les étoiles devant.
-    const objects = scene(t).sort((a, b) => a.offset[2] - b.offset[2]);
-    objects.forEach(drawInflated);
+    scene(t).forEach(drawShape);
 
     ctx.lineWidth = 1.15 / dpr;
     ctx.strokeStyle = WIRE_COLOR;
