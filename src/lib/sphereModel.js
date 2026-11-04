@@ -1,6 +1,7 @@
-// Bulle filaire + personnage du logo, légèrement gonflé en 3D et percé d'une
-// étoile, avec ses deux étoiles qui tournent autour de lui. Rendu en Canvas 2D,
-// sans WebGL ni bibliothèque 3D.
+// Bulle filaire + personnage (d'après le dessin de l'artiste), légèrement
+// gonflé en 3D et percé de l'étoile dessinée dans son torse, avec deux étoiles
+// qui tournent autour de lui. Rendu en Canvas 2D, sans WebGL ni bibliothèque 3D.
+import { FIGURE } from "./figureShape";
 
 const WIRE_COLOR = "#3f00ff"; // var(--blue)
 const WIRE_OPACITY = 0.8;
@@ -9,8 +10,7 @@ const WIRE_OPACITY = 0.8;
 const CAMERA_Z = 2.7;
 const TAN_HALF_FOV = Math.tan((45 / 2) * (Math.PI / 180));
 
-// Marque de l'artiste : la silhouette, la grande et la petite étoile, la tête
-// (et un petit trait d'élan, non utilisé ici).
+// Tracés de l'ancien logo : on n'en garde que la grande et la petite étoile.
 const LOGO_PATHS = [
   "M737.28,929.61c-.7,2.85-2.28,9.48-4.96,10.35-6.38,2.09-10.01-3.75-10.31-9.04-.35-6.1-3.65-10.94-5.03-16.83l-2.7-11.46-4.06-35.38-7.41-55.82-3.12-26.04-2.18-12.98c-.86-5.16-.26-14.3-6.47-17l-36.36-2.33-26.66-9.69c-5.06-1.84-9.32-5.53-13.52-8.29-8.52-5.61-14.07-12.32-19.55-20.73l-7.49-11.51c-5.78-8.87-11.64-17.41-14.91-27.61-6.52-14.03-12.2-27.84-16-42.84l2.14-4.61c.51-1.1,3.73-.52,4.86.37l53.2,41.36,15.82,12.95,12.73,10.41,19.42,15.19c2.92,2.29,6.33-3.21,7.74-5.46l13.2-21.24c6.13-9.86,15.33-18.78,23.57-26.67l9.18-8.79,9.04-8.65-13.63-10.08c-4.98-3.68-11.55-6.58-15.62-11.43l-10.77-12.84c-5.62-6.7-9.01-15.73-13.49-23.43l-4.49-7.71-21.92-32.03,23.75-1.96,13.82,14.22c10.08,10.37,19.19,22.19,31.61,29.83l27.09,16.67,8,4.55c2.08,1.18,6.81,3.46,7.81,5.54,4.56,9.47,12.51,14.07,21.87,16.56l19.7,5.25,20.79,5.04c6.87,1.67,15.12,2.44,20.46,6.7l13.13,10.46,20.53,19,17.05,15.84c10.09,9.37,21.85,16.89,35.37,20.56l29.06,7.9c1.42.38,4.64,2.89,4.02,4.14s-3.39,4.11-4.77,4.24l-11.79,1.13-19.36.62-28.81.64c-5.16-3.57-10.4-4.63-16.05-4.64l-17.04-10.72c-19.07-12.41-38.77-22.53-59.38-32.39-4.4-2.1-7.09-2.97-11.11.87l-34.22,32.72c-3.74,3.57-9.26,6.95-11.48,11.3-4.94,9.67-3.7,19.66-.87,29.53.73,10.98,2.9,21.54,5.91,32.16l1.65,44.31c.33,8.88-1.77,18.26-2.06,27.32-.33,10.11-.48,20.47-3.25,30.21l-9.25,32.52-2.4,9.75Z",
   "M624.48,596.82l-2.32,12.37c-1.43,7.61-2.45,14.4-5.76,22.05-.91-6.9-1.18-13.8-.49-20.77l1.37-13.9,1.67-19.08,2.77-25.94,1.17-16.54.87-25.22-19.14-4.14-9.94-1.06-11.43-.57-14.49,1.03c3.54-4.03,7.09-4.02,11.54-5.67l32.71-12.14,11.32-4.51c2.44-5.82,4.1-13.18,4.03-20.05l-.11-9.63-1.72-14.91c-.94-8.19-5.6-12.96-5.2-13.39l2.35-2.51c.55-.58,1.96,2.5,1.95,3.26l31.81,48.24,33.31-4.82,14.92-3.08,24.68-4.09c1.69-.73,3.79-.26,1.79,1.15l-27.67,11.16c-8.62,3.48-16.8,8.81-23.98,14.67-8.01,6.54-7.54,16.69-1.24,23.87,16.84,19.24,61.96,35.74,88.96,43.71,5.55,1.64,10.55,3.67,14.97,7.18l-14.68-3.21-27.63-8.33-24.2-8.1-46.09-18.41c-4.27-1.7-9.2-4.31-13.77-2.98-10.2,2.97-15.66,10.88-20.39,19.62-5.08,9.39-5.93,19.8-7.76,30.46l-4.16,24.29Z",
@@ -146,18 +146,14 @@ function flattenPath(d, samples = 8) {
 
 
 // --- Le personnage et ses étoiles, "gonflés" en 3D -------------------------
-// Tracés du logo (viewBox 419 422 543 518) : la silhouette, la tête, la
-// grande et la petite étoile. Chaque forme est extrudée en plusieurs couches
-// dont le contour enfle au milieu : un volume légèrement gonflé, aux bords
-// arrondis. Une étoile évidée traverse le torse (l'avion passe dedans).
-const PATH_BODY = 0;
+// Chaque forme est extrudée en plusieurs couches dont le contour enfle au
+// milieu : un volume légèrement gonflé, aux bords arrondis. L'étoile du torse
+// traverse le personnage de part en part (l'avion passe dedans).
 const PATH_BIG_STAR = 1;
 const PATH_SMALL_STAR = 2;
-const PATH_HEAD = 3;
 
-// Centre du trou dans le torse = centre de la bulle.
-const HOLE = { x: 721, y: 688, outer: 30, inner: 12 };
-const FIGURE_SCALE = 1.32 / 404; // la silhouette occupe ~2/3 du diamètre
+// Le centre de l'étoile du torse est placé au centre de la bulle.
+const FIGURE_SCALE = 0.82 / 304; // la jambe la plus longue s'arrête avant la bulle
 const STAR_SCALE = 0.0016;
 
 const FIGURE_DEPTH = 0.06; // demi-épaisseur
@@ -167,16 +163,6 @@ const STAR_BULGE = 0.014;
 
 const CHASE_SPEED = 0.6; // rad/s : les étoiles tournent autour de lui
 const RUN = 7; // rad/s : rebond de course
-
-function holePolygon() {
-  const pts = [];
-  for (let i = 0; i < 8; i++) {
-    const r = i % 2 ? HOLE.inner : HOLE.outer;
-    const a = -Math.PI / 2 + (i / 8) * Math.PI * 2;
-    pts.push([HOLE.x + Math.cos(a) * r, HOLE.y + Math.sin(a) * r]);
-  }
-  return pts;
-}
 
 const centerOf = (poly) => {
   let minX = Infinity;
@@ -198,14 +184,14 @@ const toLocal = (poly, [cx, cy], scale) => poly.map(([x, y]) => [(x - cx) * scal
 let shapesCache = null;
 function buildShapes() {
   if (!shapesCache) {
-    const polys = LOGO_PATHS.map((d) => flattenPath(d, 6));
-    const origin = [HOLE.x, HOLE.y];
-    const big = polys[PATH_BIG_STAR];
-    const small = polys[PATH_SMALL_STAR];
+    const big = flattenPath(LOGO_PATHS[PATH_BIG_STAR], 6);
+    const small = flattenPath(LOGO_PATHS[PATH_SMALL_STAR], 6);
+    const origin = FIGURE.holeCenter;
     shapesCache = {
       figure: {
-        polys: [toLocal(polys[PATH_BODY], origin, FIGURE_SCALE), toLocal(polys[PATH_HEAD], origin, FIGURE_SCALE)],
-        holes: [toLocal(holePolygon(), origin, FIGURE_SCALE).reverse()],
+        polys: [toLocal(FIGURE.silhouette, origin, FIGURE_SCALE)],
+        holes: [toLocal(FIGURE.hole, origin, FIGURE_SCALE)],
+        folds: FIGURE.folds.map((f) => toLocal(f, origin, FIGURE_SCALE)),
       },
       stars: [
         { polys: [toLocal(big, centerOf(big), STAR_SCALE)], holes: [], radius: 0.8, phase: 0, spin: 0.9 },
@@ -235,7 +221,7 @@ const apply = (m, [x, y, z]) => [
 
 // Teintes : [bord, face éclairée claire, face sombre]
 const PALETTES = {
-  figure: { rim: [11, 10, 20], rimLit: [44, 41, 66], faceLight: "#56527c", faceDark: "#0b0a14" },
+  figure: { rim: [11, 10, 20], rimLit: [44, 41, 66], faceLight: "#56527c", faceDark: "#0b0a14", fold: "rgba(160, 150, 235, 0.55)" },
   star: { rim: [28, 10, 112], rimLit: [62, 36, 200], faceLight: "#8f74ff", faceDark: "#2a0fb8" },
 };
 
@@ -363,6 +349,17 @@ export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
       }
       ctx.fillStyle = color;
       ctx.fill(fill, "evenodd");
+      // Sur la face visible : les traits intérieurs des membres, comme des plis.
+      if (front && shape.folds) {
+        ctx.beginPath();
+        for (const fold of shape.folds) {
+          toScreen(fold, z).forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
+          ctx.closePath();
+        }
+        ctx.lineWidth = Math.max(0.6, kPx * 0.006);
+        ctx.strokeStyle = palette.fold;
+        ctx.stroke();
+      }
     });
   }
 
