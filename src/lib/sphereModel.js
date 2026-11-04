@@ -1,23 +1,15 @@
-// Bulle filaire en 3D + personnage (d'après le dessin de l'artiste) à plat,
-// percé de l'étoile dessinée dans son torse, avec deux étoiles qui tournent
-// autour de lui. Rendu en Canvas 2D, sans WebGL ni bibliothèque 3D.
-import { FIGURE } from "./figureShape";
+// Bulle filaire en 3D + le logo de l'artiste (son SVG tel quel) : le personnage,
+// percé de l'étoile de son torse, et ses deux étoiles qui tournent autour de lui.
+// Rendu en Canvas 2D, sans WebGL ni bibliothèque 3D.
+import { LOGO } from "./logoShape";
 
 const WIRE_COLOR = "#3f00ff"; // var(--blue)
 const WIRE_OPACITY = 0.8;
+const WIRE_FADE = 0.6; // part des arêtes de l'avant effacée là où elles passent sur le dessin
 
 // Caméra : perspective 45°, placée à 2.7 du centre d'une bulle de rayon 1.
 const CAMERA_Z = 2.7;
 const TAN_HALF_FOV = Math.tan((45 / 2) * (Math.PI / 180));
-
-// Tracés de l'ancien logo : on n'en garde que la grande et la petite étoile.
-const LOGO_PATHS = [
-  "M737.28,929.61c-.7,2.85-2.28,9.48-4.96,10.35-6.38,2.09-10.01-3.75-10.31-9.04-.35-6.1-3.65-10.94-5.03-16.83l-2.7-11.46-4.06-35.38-7.41-55.82-3.12-26.04-2.18-12.98c-.86-5.16-.26-14.3-6.47-17l-36.36-2.33-26.66-9.69c-5.06-1.84-9.32-5.53-13.52-8.29-8.52-5.61-14.07-12.32-19.55-20.73l-7.49-11.51c-5.78-8.87-11.64-17.41-14.91-27.61-6.52-14.03-12.2-27.84-16-42.84l2.14-4.61c.51-1.1,3.73-.52,4.86.37l53.2,41.36,15.82,12.95,12.73,10.41,19.42,15.19c2.92,2.29,6.33-3.21,7.74-5.46l13.2-21.24c6.13-9.86,15.33-18.78,23.57-26.67l9.18-8.79,9.04-8.65-13.63-10.08c-4.98-3.68-11.55-6.58-15.62-11.43l-10.77-12.84c-5.62-6.7-9.01-15.73-13.49-23.43l-4.49-7.71-21.92-32.03,23.75-1.96,13.82,14.22c10.08,10.37,19.19,22.19,31.61,29.83l27.09,16.67,8,4.55c2.08,1.18,6.81,3.46,7.81,5.54,4.56,9.47,12.51,14.07,21.87,16.56l19.7,5.25,20.79,5.04c6.87,1.67,15.12,2.44,20.46,6.7l13.13,10.46,20.53,19,17.05,15.84c10.09,9.37,21.85,16.89,35.37,20.56l29.06,7.9c1.42.38,4.64,2.89,4.02,4.14s-3.39,4.11-4.77,4.24l-11.79,1.13-19.36.62-28.81.64c-5.16-3.57-10.4-4.63-16.05-4.64l-17.04-10.72c-19.07-12.41-38.77-22.53-59.38-32.39-4.4-2.1-7.09-2.97-11.11.87l-34.22,32.72c-3.74,3.57-9.26,6.95-11.48,11.3-4.94,9.67-3.7,19.66-.87,29.53.73,10.98,2.9,21.54,5.91,32.16l1.65,44.31c.33,8.88-1.77,18.26-2.06,27.32-.33,10.11-.48,20.47-3.25,30.21l-9.25,32.52-2.4,9.75Z",
-  "M624.48,596.82l-2.32,12.37c-1.43,7.61-2.45,14.4-5.76,22.05-.91-6.9-1.18-13.8-.49-20.77l1.37-13.9,1.67-19.08,2.77-25.94,1.17-16.54.87-25.22-19.14-4.14-9.94-1.06-11.43-.57-14.49,1.03c3.54-4.03,7.09-4.02,11.54-5.67l32.71-12.14,11.32-4.51c2.44-5.82,4.1-13.18,4.03-20.05l-.11-9.63-1.72-14.91c-.94-8.19-5.6-12.96-5.2-13.39l2.35-2.51c.55-.58,1.96,2.5,1.95,3.26l31.81,48.24,33.31-4.82,14.92-3.08,24.68-4.09c1.69-.73,3.79-.26,1.79,1.15l-27.67,11.16c-8.62,3.48-16.8,8.81-23.98,14.67-8.01,6.54-7.54,16.69-1.24,23.87,16.84,19.24,61.96,35.74,88.96,43.71,5.55,1.64,10.55,3.67,14.97,7.18l-14.68-3.21-27.63-8.33-24.2-8.1-46.09-18.41c-4.27-1.7-9.2-4.31-13.77-2.98-10.2,2.97-15.66,10.88-20.39,19.62-5.08,9.39-5.93,19.8-7.76,30.46l-4.16,24.29Z",
-  "M490.95,607.82c-5.22-.44-12.24,2.81-16.14,6.55-12.98,12.45-26.78,21.74-43.12,29.6-2.74,1.32-3.85,3.46-4.4,6.53-1.39-1.09-2.44-2.37-3.39-2.25l-6.33.77,51.4-36.49c2.69-1.91,6.26-7.86,8.14-10.57,8.65-12.5-5.57-36.79-18.89-48.92l-15.02-13.67-2.71-2.19c-.61-.5,1.43-2.72,2.05-2.22l2.77,2.22c8.83,7.07,19.05,12.9,26.02,21.79l16.95,21.6c1.09,1.39,3.62,4.01,5.07,3.55l6.6-2.08c8.16-2.57,16.03-5,23.55-9.31l28.35-16.28,1.2,1.51-24.6,17.13c-6.84,4.76-12.5,9.75-18.05,16.13-4.43,5.1-5.84,10.45-1.86,17.27,10.49,17.99,25.56,32.01,40.02,48.66-18.3-6.09-29.87-20.86-39.61-35.85-4.19-6.44-9.11-12.72-17.98-13.47Z",
-  "M809.36,598.81l-1.77,10.58-17.55,5.14c-10.51,3.08-15.9-5.9-18.56-13.36-2.97-8.36-3.14-13.46,1.52-21.31,1.39-2.34,3.05-6.91,5.24-8.02,2.91-1.49,8.51-1.13,11.67-.68l10.83,1.53c4.56.64,11.61,1.69,14.2,5.92l-5.59,20.22Z",
-  "M554.07,508.21c-12.52,3.64-24.41,7.8-39.26,10.4,7.76-4.77,16.81-6.89,26.2-9.35,4.01-1.05,7.49-1.64,13.06-1.05Z",
-];
 
 // --- Bulle : icosaèdre subdivisé, projeté sur la sphère ---
 function buildWireframe(subdiv = 4) {
@@ -78,133 +70,20 @@ function buildWireframe(subdiv = 4) {
   };
 }
 
-// --- Logo : tracés SVG aplatis en polygones, centrés dans le plan z = 0 ---
-function flattenPath(d, samples = 8) {
-  const tokens = d.match(/[a-zA-Z]|-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/g);
-  const pts = [];
-  let i = 0;
-  let cmd = null;
-  let x = 0;
-  let y = 0;
-  let lastCtrl = null;
-  const num = () => parseFloat(tokens[i++]);
-  function cubic(x1, y1, x2, y2, x3, y3) {
-    for (let s = 1; s <= samples; s++) {
-      const t = s / samples;
-      const u = 1 - t;
-      pts.push([
-        u * u * u * x + 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t * x3,
-        u * u * u * y + 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t * y3,
-      ]);
-    }
-    lastCtrl = [x2, y2];
-    x = x3;
-    y = y3;
-  }
-  while (i < tokens.length) {
-    if (/[a-zA-Z]/.test(tokens[i])) cmd = tokens[i++];
-    switch (cmd) {
-      case "M":
-        x = num();
-        y = num();
-        pts.push([x, y]);
-        cmd = "L";
-        break;
-      case "l":
-        x += num();
-        y += num();
-        pts.push([x, y]);
-        lastCtrl = null;
-        break;
-      case "L":
-        x = num();
-        y = num();
-        pts.push([x, y]);
-        lastCtrl = null;
-        break;
-      case "c": {
-        const [x1, y1, x2, y2, x3, y3] = [num(), num(), num(), num(), num(), num()];
-        cubic(x + x1, y + y1, x + x2, y + y2, x + x3, y + y3);
-        break;
-      }
-      case "s": {
-        const [x2, y2, x3, y3] = [num(), num(), num(), num()];
-        const [x1, y1] = lastCtrl ? [2 * x - lastCtrl[0], 2 * y - lastCtrl[1]] : [x, y];
-        cubic(x1, y1, x + x2, y + y2, x + x3, y + y3);
-        break;
-      }
-      case "Z":
-      case "z":
-        i = tokens.length;
-        break;
-      default:
-        i++; // commande non utilisée par ces tracés
-    }
-  }
-  return pts;
-}
+// --- Le logo dans la bulle ---------------------------------------------------
+// Le dessin reste à plat et tel quel (tracés SVG de l'artiste). L'étoile évidée
+// du torse est au centre de la bulle : c'est par là que l'avion passe. Les deux
+// étoiles partent de leur place dans le dessin et tournent autour de sa tête,
+// sur un anneau un peu incliné : elles passent devant lui puis derrière.
+const SCALE = 0.00244; // unités de la bulle par px du SVG : tout tient dans la bulle
+const ORBIT_SPEED = 0.6; // rad/s
+const ORBIT_TILT = 0.38; // rad : inclinaison de l'anneau vers la caméra
+const STAR_SPIN = [0.5, -0.65]; // rad/s : chaque étoile pivote aussi sur elle-même
+const HALO = 6; // px du SVG : liseré vide autour de chaque forme, pour les détacher
 
-
-// --- Le personnage et ses étoiles, à plat --------------------------------
-// Le personnage du dessin (silhouette pleine, l'étoile du torse évidée — l'avion
-// passe dedans — et les traits intérieurs des membres en blanc) et deux
-// étoiles qui tournent autour de lui, le tout en 2D dans un même plan.
-const PATH_BIG_STAR = 1;
-const PATH_SMALL_STAR = 2;
-
-// Le centre de l'étoile du torse est placé au centre de la bulle.
-const FIGURE_SCALE = 0.82 / 304; // la jambe la plus longue s'arrête avant la bulle
-const STAR_SCALE = 0.0016;
-
-const ORBIT_SPEED = 0.6; // rad/s : les étoiles tournent autour de lui
-
-const FIGURE_COLOR = "#0b0a14"; // var(--ink)
-const FOLD_COLOR = "rgba(255, 255, 255, 0.8)";
-const STAR_COLOR = "#2a0fb8";
-
-const centerOf = (poly) => {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const [x, y] of poly) {
-    minX = Math.min(minX, x);
-    maxX = Math.max(maxX, x);
-    minY = Math.min(minY, y);
-    maxY = Math.max(maxY, y);
-  }
-  return [(minX + maxX) / 2, (minY + maxY) / 2];
-};
-
-// SVG / image (y vers le bas) -> repère 3D (y vers le haut), centré et mis à l'échelle.
-const toLocal = (poly, [cx, cy], scale) => poly.map(([x, y]) => [(x - cx) * scale, -(y - cy) * scale]);
-
-let shapesCache = null;
-function buildShapes() {
-  if (!shapesCache) {
-    const big = flattenPath(LOGO_PATHS[PATH_BIG_STAR], 6);
-    const small = flattenPath(LOGO_PATHS[PATH_SMALL_STAR], 6);
-    const origin = FIGURE.holeCenter;
-    shapesCache = {
-      figure: {
-        polys: [toLocal(FIGURE.silhouette, origin, FIGURE_SCALE)],
-        holes: [toLocal(FIGURE.hole, origin, FIGURE_SCALE)],
-        folds: FIGURE.folds.map((f) => toLocal(f, origin, FIGURE_SCALE)),
-        color: FIGURE_COLOR,
-      },
-      stars: [
-        { polys: [toLocal(big, centerOf(big), STAR_SCALE)], holes: [], color: STAR_COLOR, radius: 0.82, phase: 0, spin: 0.9 },
-        { polys: [toLocal(small, centerOf(small), STAR_SCALE)], holes: [], color: STAR_COLOR, radius: 0.74, phase: 2.6, spin: -1.3 },
-      ],
-    };
-  }
-  return shapesCache;
-}
-
-// Petites matrices 3×3 (lignes) : rotations autour de x, y, z.
+// Petites matrices 3×3 (lignes) : rotations autour de x, y.
 const rotX = (a) => [1, 0, 0, 0, Math.cos(a), -Math.sin(a), 0, Math.sin(a), Math.cos(a)];
 const rotY = (a) => [Math.cos(a), 0, Math.sin(a), 0, 1, 0, -Math.sin(a), 0, Math.cos(a)];
-const rotZ = (a) => [Math.cos(a), -Math.sin(a), 0, Math.sin(a), Math.cos(a), 0, 0, 0, 1];
 function mul(a, b) {
   const m = new Array(9);
   for (let r = 0; r < 3; r++)
@@ -218,22 +97,38 @@ const apply = (m, [x, y, z]) => [
   m[6] * x + m[7] * y + m[8] * z,
 ];
 
-// Position et orientation de chaque forme à l'instant t (repère caméra).
-// Le plan du dessin se balance à peine (il reste lisible) ; les étoiles
-// tournent autour du personnage dans ce même plan, en pivotant sur elles-mêmes.
-function scene(t) {
-  const shapes = buildShapes();
-  const plane = mul(rotY(0.22 * Math.sin(t * 0.45)), rotX(0.1 * Math.sin(t * 0.33)));
-  const figure = { shape: shapes.figure, m: plane, offset: [0, 0, 0] };
-  const stars = shapes.stars.map((s) => {
-    const a = ORBIT_SPEED * t + s.phase;
-    return {
-      shape: s,
-      m: mul(plane, rotZ(t * s.spin)),
-      offset: apply(plane, [Math.cos(a) * s.radius, Math.sin(a) * s.radius, 0]),
-    };
-  });
-  return [figure, ...stars];
+// SVG (y vers le bas) -> repère de la bulle (y vers le haut), origine sur l'étoile du torse.
+const [HOLE_X, HOLE_Y] = LOGO.holeCenter;
+const toBubble = ([x, y]) => [(x - HOLE_X) * SCALE, -(y - HOLE_Y) * SCALE];
+
+// Anneau des étoiles : centré entre elles, passant par leurs deux places dessinées.
+const [S1, S2] = LOGO.starCenters.map(toBubble);
+const RING = (() => {
+  const dx = S2[0] - S1[0];
+  const dy = S2[1] - S1[1];
+  const length = Math.hypot(dx, dy);
+  return { center: [(S1[0] + S2[0]) / 2, (S1[1] + S2[1]) / 2], radius: length / 2, axis: [dx / length, dy / length] };
+})();
+const STAR_PHASE = [Math.PI, 0]; // l'étoile de gauche, celle de droite
+
+// Position de chaque étoile à l'instant t ; z > 0 : devant le personnage.
+function starPosition(i, t) {
+  const a = ORBIT_SPEED * t + STAR_PHASE[i];
+  const { center, radius, axis } = RING;
+  const c = Math.cos(a) * radius;
+  const s = Math.sin(a) * radius;
+  return [center[0] + c * axis[0], center[1] + c * axis[1] - s * Math.sin(ORBIT_TILT), s * Math.cos(ORBIT_TILT)];
+}
+
+let pathsCache = null;
+function logoPaths() {
+  if (!pathsCache) {
+    const figure = new Path2D();
+    figure.addPath(new Path2D(LOGO.body));
+    figure.addPath(new Path2D(LOGO.head));
+    pathsCache = { figure, stars: LOGO.stars.map((points) => new Path2D(`M${points}Z`)) };
+  }
+  return pathsCache;
 }
 
 // --- Rendu --------------------------------------------------------------
@@ -241,7 +136,7 @@ function scene(t) {
 const wireCache = new Map();
 
 // Prépare un canvas de `size` px CSS et renvoie draw(rotX, rotY, t) :
-// rotX / rotY orientent la bulle, t (secondes) anime les étoiles.
+// rotX / rotY orientent la bulle, t (secondes) anime le personnage et les étoiles.
 // subdiv : finesse du maillage de la bulle (4 pour le splash, 2 pour une icône).
 export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -253,38 +148,60 @@ export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
 
   if (!wireCache.has(subdiv)) wireCache.set(subdiv, buildWireframe(subdiv));
   const wire = wireCache.get(subdiv);
+  const paths = logoPaths();
   const half = size / 2;
+  const pxPerUnit = (z) => half / ((CAMERA_Z - z) * TAN_HALF_FOV);
   const project = ([x, y, z]) => {
-    const k = half / ((CAMERA_Z - z) * TAN_HALF_FOV);
+    const k = pxPerUnit(z);
     return [half + x * k, half - y * k];
   };
 
-  function addPolygon(path, poly, { m, offset }) {
-    poly.forEach(([x, y], i) => {
-      const p = apply(m, [x, y, 0]);
-      const [sx, sy] = project([p[0] + offset[0], p[1] + offset[1], p[2] + offset[2]]);
-      if (i === 0) path.moveTo(sx, sy);
-      else path.lineTo(sx, sy);
-    });
-    path.closePath();
+  // Une forme du SVG, dans le repère déjà posé : d'abord un liseré effacé
+  // autour d'elle (ce qui est derrière s'écarte), puis le remplissage et le
+  // contour de 5 px du fichier.
+  function drawPiece(path) {
+    ctx.lineJoin = "round";
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.lineWidth = LOGO.stroke + 2 * HALO;
+    ctx.stroke(path);
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = LOGO.color;
+    ctx.strokeStyle = LOGO.color;
+    ctx.fill(path);
+    ctx.lineJoin = "miter";
+    ctx.miterLimit = 10;
+    ctx.lineWidth = LOGO.stroke;
+    ctx.stroke(path);
   }
 
-  function drawShape(obj) {
-    const { shape } = obj;
-    const fill = new Path2D();
-    for (const poly of shape.polys) addPolygon(fill, poly, obj);
-    for (const hole of shape.holes) addPolygon(fill, hole, obj);
-    ctx.fillStyle = shape.color;
-    ctx.fill(fill, "evenodd");
-    if (shape.folds) {
-      const folds = new Path2D();
-      for (const fold of shape.folds) addPolygon(folds, fold, obj);
-      ctx.lineWidth = Math.max(0.6, size / 320);
-      ctx.lineJoin = "round";
-      ctx.strokeStyle = FOLD_COLOR;
-      ctx.stroke(folds);
-    }
+  // Repère du personnage (coordonnées SVG) : à peine penché en avant et en
+  // arrière, comme s'il courait ; l'étoile du torse reste au centre.
+  function placeFigure(g, t) {
+    const k = pxPerUnit(0) * SCALE;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.translate(half, half - 0.012 * Math.sin(t * 3.2) * pxPerUnit(0));
+    g.rotate(0.035 * Math.sin(t * 1.6));
+    g.scale(k * Math.cos(0.2 * Math.sin(t * 0.45)), k);
+    g.translate(-HOLE_X, -HOLE_Y);
   }
+
+  // Repère d'une étoile : sur son anneau, pivotant sur elle-même.
+  function placeStar(g, { i, position }, t) {
+    const [sx, sy] = project(position);
+    const [cx, cy] = LOGO.starCenters[i];
+    const k = pxPerUnit(position[2]) * SCALE;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.translate(sx, sy);
+    g.rotate(STAR_SPIN[i] * t);
+    g.scale(k, k);
+    g.translate(-cx, -cy);
+  }
+
+  // Calque des arêtes de l'avant : elles s'estompent là où elles croisent le dessin.
+  const veil = document.createElement("canvas");
+  veil.width = canvas.width;
+  veil.height = canvas.height;
+  const vctx = veil.getContext("2d");
 
   function draw(bubbleX, bubbleY, t = 0) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -308,13 +225,39 @@ export function createSphereRenderer(canvas, size, { subdiv = 4 } = {}) {
     ctx.stroke(back);
     ctx.globalAlpha = 1;
 
-    scene(t).forEach(drawShape);
+    // Les étoiles derrière lui, le personnage, puis celles devant.
+    const stars = LOGO.stars.map((_, i) => ({ i, position: starPosition(i, t) }));
+    const behind = stars.filter((s) => s.position[2] < 0);
+    const before = stars.filter((s) => s.position[2] >= 0);
+    for (const s of behind) {
+      placeStar(ctx, s, t);
+      drawPiece(paths.stars[s.i]);
+    }
+    placeFigure(ctx, t);
+    drawPiece(paths.figure);
+    for (const s of before) {
+      placeStar(ctx, s, t);
+      drawPiece(paths.stars[s.i]);
+    }
 
-    ctx.lineWidth = 1.15 / dpr;
-    ctx.strokeStyle = WIRE_COLOR;
-    ctx.globalAlpha = WIRE_OPACITY;
-    ctx.stroke(front);
-    ctx.globalAlpha = 1;
+    vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    vctx.clearRect(0, 0, size, size);
+    vctx.lineWidth = 1.15 / dpr;
+    vctx.strokeStyle = WIRE_COLOR;
+    vctx.globalAlpha = WIRE_OPACITY;
+    vctx.stroke(front);
+    vctx.globalCompositeOperation = "destination-out";
+    vctx.globalAlpha = WIRE_FADE;
+    placeFigure(vctx, t);
+    vctx.fill(paths.figure);
+    for (const s of stars) {
+      placeStar(vctx, s, t);
+      vctx.fill(paths.stars[s.i]);
+    }
+    vctx.globalCompositeOperation = "source-over";
+    vctx.globalAlpha = 1;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(veil, 0, 0);
   }
 
   return { draw };
